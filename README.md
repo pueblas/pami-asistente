@@ -16,7 +16,7 @@ Aplicación web que utiliza procesamiento de lenguaje natural para responder con
 ### Instalación y ejecución
 
 1. Clonar el repositorio:
-git clone https://github.com/[tu-usuario]/pami-asistente.git
+git clone https://github.com/pueblas/pami-asistente.git
 cd pami-asistente
 
 2. Levantar los servicios:
