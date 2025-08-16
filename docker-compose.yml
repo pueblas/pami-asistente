@@ -10,3 +10,19 @@ services:
       - ./database:/app/database
     environment:
       - ENVIRONMENT=development
+    networks:
+      - pami-network
+
+  frontend:
+    build: ./frontend
+    container_name: pami-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - pami-network
+
+networks:
+  pami-network:
+    driver: bridge

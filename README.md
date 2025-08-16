@@ -27,6 +27,7 @@ docker-compose up --build
 ```
 
 3. Acceder a la aplicación:
+- Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - Health check: http://localhost:8000/health
 
@@ -38,13 +39,19 @@ docker-compose down
 ```
 
 ## 🏗️ Arquitectura
+
 ```
 pami-asistente/
 ├── backend/          # API REST (FastAPI)
 │   ├── Dockerfile
 │   ├── main.py
 │   └── requirements.txt
-├── frontend/         # [En desarrollo]
+├── frontend/         # Interfaz web (HTML/JS/CSS + Nginx)
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
 ├── database/         # Almacenamiento SQLite
 ├── docker-compose.yml
 └── README.md
@@ -58,12 +65,16 @@ pami-asistente/
 
 ## 📝 Estado del Proyecto
 
+## 📝 Estado del Proyecto
+
 **Checkpoint 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
-- [x] Backend API inicial
+- [x] Backend FastAPI inicial
+- [x] Frontend mock con comunicación al backend
+- [x] Contenedores comunicándose via Docker Network
 - [ ] Base de datos SQLite
 - [ ] Sistema de autenticación
-- [ ] Frontend básico
+- [ ] Pantallas de login/registro
 
 ---
 

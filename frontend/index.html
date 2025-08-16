@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAMI Asistente - Mock Frontend</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 PAMI Asistente</h1>
+        <p class="subtitle">Frontend Mock - Checkpoint 1</p>
+        
+        <div class="status-card">
+            <h2>Estado de Servicios</h2>
+            <div class="service">
+                <span>Frontend:</span>
+                <span class="status" id="frontend-status">✅ Activo</span>
+            </div>
+            <div class="service">
+                <span>Backend:</span>
+                <span class="status" id="backend-status">⏳ Verificando...</span>
+            </div>
+        </div>
+        
+        <button id="test-btn">Probar Conexión con Backend</button>
+        
+        <div id="response" class="response-box"></div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
