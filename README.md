@@ -16,22 +16,29 @@ Aplicación web que utiliza procesamiento de lenguaje natural para responder con
 ### Instalación y ejecución
 
 1. Clonar el repositorio:
+```bash
 git clone https://github.com/pueblas/pami-asistente.git
 cd pami-asistente
+```
 
 2. Levantar los servicios:
+```bash
 docker-compose up --build
+```
 
 3. Acceder a la aplicación:
 - Backend API: http://localhost:8000
 - Health check: http://localhost:8000/health
 
 ### Detener los servicios
-# Detener con Ctrl+C o en otra terminal:
+- Ctrl+C
+- O correr en otra terminal:
+```bash
 docker-compose down
+```
 
 ## 🏗️ Arquitectura
-
+```
 pami-asistente/
 ├── backend/          # API REST (FastAPI)
 │   ├── Dockerfile
@@ -41,7 +48,7 @@ pami-asistente/
 ├── database/         # Almacenamiento SQLite
 ├── docker-compose.yml
 └── README.md
-
+```
 ## 👥 Equipo
 
 - Lautaro Bonasora
@@ -53,7 +60,7 @@ pami-asistente/
 
 **Checkpoint 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
-- [x] Backend FastAPI inicial
+- [x] Backend API inicial
 - [ ] Base de datos SQLite
 - [ ] Sistema de autenticación
 - [ ] Frontend básico
