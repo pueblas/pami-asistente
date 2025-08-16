@@ -65,8 +65,6 @@ pami-asistente/
 
 ## 📝 Estado del Proyecto
 
-## 📝 Estado del Proyecto
-
 **Checkpoint 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
 - [x] Backend FastAPI inicial
