@@ -46,12 +46,15 @@ pami-asistente/
 │   ├── Dockerfile
 │   ├── main.py
 │   └── requirements.txt
-├── frontend/         # Interfaz web (HTML/JS/CSS + Nginx)
+├── frontend/         # React App
 │   ├── Dockerfile
 │   ├── nginx.conf
-│   ├── index.html
-│   ├── app.js
-│   └── style.css
+│   ├── package.json
+│   ├── public/
+│   └── src/
+│       ├── App.js
+│       ├── App.css
+│       └── index.js
 ├── database/         # Almacenamiento SQLite
 ├── docker-compose.yml
 └── README.md

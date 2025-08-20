@@ -1,11 +1,28 @@
+# Etapa de build
+FROM node:18-alpine as build
+
+WORKDIR /app
+
+# Copiar package files
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm ci --only=production
+
+# Copiar código fuente
+COPY public/ ./public
+COPY src/ ./src
+
+# Construir la app
+RUN npm run build
+
+# Etapa de producción con Nginx
 FROM nginx:alpine
 
-# Copiar archivos estáticos
-COPY index.html /usr/share/nginx/html/
-COPY app.js /usr/share/nginx/html/
-COPY style.css /usr/share/nginx/html/
+# Copiar build de React
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Configuración para permitir CORS y comunicación con backend
+# Configuración de Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
