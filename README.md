@@ -31,6 +31,36 @@ docker-compose up --build
 - Backend API: http://localhost:8000
 - Health check: http://localhost:8000/health
 
+4. Usuario admin por defecto:
+- Email: admin@caece.edu.ar
+- Contraseña: admin123
+
+## 🗄️ Base de Datos
+
+### Verificar datos en SQLite
+
+```bash
+# Entrar al contenedor
+docker exec -it pami-backend bash
+
+# Conectarse a la BD
+sqlite3 /app/database/pami.db
+
+# Comandos útiles de SQLite
+.tables              # Ver todas las tablas
+SELECT * FROM usuario;   # Ver usuarios
+SELECT * FROM rol;       # Ver roles
+.exit                    # Salir de SQLite
+
+# Salir del contenedor
+exit
+```
+
+### Datos iniciales
+El sistema crea automáticamente:
+- Roles: `usuario` y `administrador`
+- Usuario admin por defecto (credenciales arriba)
+
 ### Detener los servicios
 - Ctrl+C
 - O correr en otra terminal:
@@ -42,20 +72,23 @@ docker-compose down
 
 ```
 pami-asistente/
-├── backend/          # API REST (FastAPI)
+├── backend/              # API REST (FastAPI)
+│   ├── db/              # Configuración de base de datos
+│   │   ├── connection.py
+│   │   └── init_data.py
+│   ├── models/          # Modelos SQLAlchemy
+│   │   ├── user.py
+│   │   └── role.py
 │   ├── Dockerfile
 │   ├── main.py
 │   └── requirements.txt
-├── frontend/         # React App
+├── frontend/            # React App
+│   ├── public/
+│   ├── src/
 │   ├── Dockerfile
 │   ├── nginx.conf
-│   ├── package.json
-│   ├── public/
-│   └── src/
-│       ├── App.js
-│       ├── App.css
-│       └── index.js
-├── database/         # Almacenamiento SQLite
+│   └── package.json
+├── database/            # Almacenamiento SQLite (pami.db)
 ├── docker-compose.yml
 └── README.md
 ```
@@ -68,13 +101,16 @@ pami-asistente/
 
 ## 📝 Estado del Proyecto
 
-**Checkpoint 1** - En desarrollo 🔨
+**Release 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
-- [x] Backend FastAPI inicial
-- [x] Frontend mock con comunicación al backend
-- [x] Contenedores comunicándose via Docker Network
-- [ ] Base de datos SQLite
-- [ ] Sistema de autenticación
+- [x] Backend FastAPI con CORS configurado
+- [x] Frontend React con comunicación al backend
+- [x] Base de datos SQLite con persistencia
+- [x] Modelos de Usuario y Rol implementados
+- [x] Datos iniciales (admin) creados automáticamente
+- [x] SQLite incluido en contenedor para debugging
+- [ ] Sistema de autenticación JWT
+- [ ] Endpoints de registro/login
 - [ ] Pantallas de login/registro
 
 ---
