@@ -35,6 +35,13 @@ docker-compose up --build
 - Email: admin@caece.edu.ar
 - Contraseña: admin123
 
+5. Detener los servicios
+- Ctrl+C
+- O correr en otra terminal:
+```bash
+docker-compose down
+```
+
 ## 🗄️ Base de Datos
 
 ### Verificar datos en SQLite
@@ -61,14 +68,30 @@ El sistema crea automáticamente:
 - Roles: `usuario` y `administrador`
 - Usuario admin por defecto (credenciales arriba)
 
-### Detener los servicios
-- Ctrl+C
-- O correr en otra terminal:
+## 🔌 API Endpoints
+
+### Autenticación
+- `POST /auth/register` - Registro de nuevo usuario
+- `POST /auth/login` - Login (retorna JWT token)
+
+### Documentación interactiva
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+### Ejemplo de uso:
 ```bash
-docker-compose down
+# Registro
+curl -X POST http://localhost:8000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"primer_nombre":"Juan","apellido":"Perez","correo_electronico":"juan@caece.edu.ar","password":"caece2025"}'
+
+# Login
+curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"correo_electronico":"juan@caece.edu.ar","password":"caece2025"}'
 ```
 
-## 🏗️ Arquitectura
+## 🏗️ Estructura del proyecto
 
 ```
 pami-asistente/
@@ -101,17 +124,17 @@ pami-asistente/
 
 ## 📝 Estado del Proyecto
 
-**Release 1** - En desarrollo 🔨
+**Checkpoint 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
 - [x] Backend FastAPI con CORS configurado
 - [x] Frontend React con comunicación al backend
 - [x] Base de datos SQLite con persistencia
 - [x] Modelos de Usuario y Rol implementados
 - [x] Datos iniciales (admin) creados automáticamente
-- [x] SQLite incluido en contenedor para debugging
-- [ ] Sistema de autenticación JWT
-- [ ] Endpoints de registro/login
-- [ ] Pantallas de login/registro
+- [x] Sistema de autenticación JWT
+- [x] Endpoints de registro y login
+- [ ] Endpoints de recuperación de contraseña
+- [ ] Pantallas de login/registro en React
 
 ---
 
