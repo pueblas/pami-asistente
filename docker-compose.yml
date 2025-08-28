@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build: ./backend
@@ -10,8 +8,12 @@ services:
       - ./database:/app/database
     environment:
       - ENVIRONMENT=development
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
     networks:
       - pami-network
+    depends_on:
+      - mailhog
 
   frontend:
     build: ./frontend
@@ -20,6 +22,15 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - pami-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: pami-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
     networks:
       - pami-network
 

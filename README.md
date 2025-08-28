@@ -1,20 +1,15 @@
 # Asistente de Trámites de PAMI 🤖
-
 Asistente conversacional basado en IA para facilitar trámites de PAMI a personas mayores y sus familiares.
 
 ## 📋 Descripción
-
 Aplicación web que utiliza procesamiento de lenguaje natural para responder consultas sobre trámites de PAMI de manera simple y accesible, manteniendo el contexto de la conversación y proporcionando enlaces directos cuando corresponda.
 
 ## 🚀 Quick Start
-
 ### Prerrequisitos
-
 - Docker Desktop instalado ([Descargar aquí](https://www.docker.com/products/docker-desktop/))
 - Git
 
 ### Instalación y ejecución
-
 1. Clonar el repositorio:
 ```bash
 git clone https://github.com/pueblas/pami-asistente.git
@@ -43,9 +38,7 @@ docker-compose down
 ```
 
 ## 🗄️ Base de Datos
-
 ### Verificar datos en SQLite
-
 ```bash
 # Entrar al contenedor
 docker exec -it pami-backend bash
@@ -74,6 +67,12 @@ El sistema crea automáticamente:
 - `POST /auth/register` - Registro de nuevo usuario
 - `POST /auth/login` - Login (retorna JWT token)
 
+### Admin
+Requieren token con rol "administrador":
+- `GET /admin/users` - Listar todos los usuarios
+- `POST /admin/users` - Crear nuevo administrador
+- `DELETE /admin/users/{id}` - Eliminar usuario
+
 ### Documentación interactiva
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
@@ -90,9 +89,12 @@ curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/json" \
   -d '{"correo_electronico":"juan@caece.edu.ar","password":"caece2025"}'
 ```
+## 📧 Sistema de Emails (MailHog)
+El proyecto incluye MailHog para capturar emails en desarrollo:
+- Web UI: http://localhost:8025
+- Todos los emails enviados se visualizan ahí (recuperación de contraseña, etc.)
 
 ## 🏗️ Estructura del proyecto
-
 ```
 pami-asistente/
 ├── backend/              # API REST (FastAPI)
@@ -102,6 +104,15 @@ pami-asistente/
 │   ├── models/          # Modelos SQLAlchemy
 │   │   ├── user.py
 │   │   └── role.py
+│   ├── routes/          # Endpoints de la API
+│   │   ├── auth.py     # Autenticación y registro
+│   │   └── admin.py    # Administración
+│   ├── schemas/         # Validación con Pydantic
+│   │   └── user.py
+│   ├── utils/           # Utilidades
+│   │   ├── auth.py     # JWT y hashing
+│   │   ├── email.py    # Envío de emails
+│   │   └── security.py # Protección de rutas
 │   ├── Dockerfile
 │   ├── main.py
 │   └── requirements.txt
@@ -116,24 +127,20 @@ pami-asistente/
 └── README.md
 ```
 ## 👥 Equipo
-
 - Lautaro Bonasora
 - Juan Bautista Rueda
 - Eugenio Provenzano
 - Joaquín Lino Alonso
 
 ## 📝 Estado del Proyecto
-
 **Checkpoint 1** - En desarrollo 🔨
 - [x] Estructura Docker básica
-- [x] Backend FastAPI con CORS configurado
 - [x] Frontend React con comunicación al backend
 - [x] Base de datos SQLite con persistencia
-- [x] Modelos de Usuario y Rol implementados
-- [x] Datos iniciales (admin) creados automáticamente
 - [x] Sistema de autenticación JWT
 - [x] Endpoints de registro y login
-- [ ] Endpoints de recuperación de contraseña
+- [x] Endpoints de recuperación de contraseña
+- [x] Endpoints de admin (listar, crear y eliminar usuarios)
 - [ ] Pantallas de login/registro en React
 
 ---
