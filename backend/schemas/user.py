@@ -31,7 +31,8 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-# Schema para datos dentro del token
-class TokenData(BaseModel):
-    user_id: Optional[int] = None
-    email: Optional[str] = None
+# Schema para el token JWT
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str = "usuario"  # Agregar el rol

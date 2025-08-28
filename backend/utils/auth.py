@@ -42,3 +42,13 @@ def verify_token(token: str):
         return payload
     except JWTError:
         return None
+    
+def create_reset_token(email: str):
+    """Crea un token especial para reset de contraseña"""
+    data = {
+        "sub": email,
+        "type": "password_reset"
+    }
+    # Token válido por 1 hora
+    expires = timedelta(hours=1)
+    return create_access_token(data=data, expires_delta=expires)
