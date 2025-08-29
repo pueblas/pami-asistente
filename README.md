@@ -119,15 +119,15 @@ pami-asistente/
 ├── frontend/            # React App
 │   ├── public/
 │   ├── src/
-      ├── api/
-            └── auth.js 
-      ├── pages/ 
-│       │   ├── health.css
-│       │   ├── health.js
-│       │   ├── login.css
-│       │   ├── login.js
-│       │   ├── register.css
-│       │   └── register.js 
+│   │   ├── api/
+│   │   │   └── auth.js 
+│   │   ├── pages/ 
+│   │   │   ├── health.css
+│   │   │   ├── health.js
+│   │   │   ├── login.css
+│   │   │   ├── login.js
+│   │   │   ├── register.css
+│   │   │   └── register.js 
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
