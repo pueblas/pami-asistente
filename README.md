@@ -94,6 +94,11 @@ El proyecto incluye MailHog para capturar emails en desarrollo:
 - Web UI: http://localhost:8025
 - Todos los emails enviados se visualizan ahí (recuperación de contraseña, etc.)
 
+## Frontend
+- /login -> Para iniciar sesion, te lleva a /health
+- /register -> Se registra el usuario y te redirige a /login
+- /health -> Muestra el estado del frontend y el backend
+
 ## 🏗️ Estructura del proyecto
 ```
 pami-asistente/
