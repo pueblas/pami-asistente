@@ -155,7 +155,7 @@ pami-asistente/
 - [x] Endpoints de registro y login
 - [x] Endpoints de recuperación de contraseña
 - [x] Endpoints de admin (listar, crear y eliminar usuarios)
-- [ ] Pantallas de login/registro en React
+- [x] Pantallas de login/registro en React
 
 ---
 
