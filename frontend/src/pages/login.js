@@ -19,7 +19,12 @@ function Login() {
       // Guardar token en localStorage o estado global si quieres
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", role);
-      navigate('/health');
+      if(role == 'usuario'){
+        navigate('/chatbot')
+      }
+      else{
+        navigate('/admin-center')
+      }
     } catch (err) {
           console.error("Error en login:", err);
         if (err.response && err.response.status === 401) {
