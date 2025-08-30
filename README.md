@@ -95,7 +95,7 @@ El proyecto incluye MailHog para capturar emails en desarrollo:
 - Todos los emails enviados se visualizan ahí (recuperación de contraseña, etc.)
 
 ## Frontend
-- /login -> Para iniciar sesion, te lleva a /health
+- /login -> Para iniciar sesion, dependiendo del rol del usuario te lleva al admin center o al chatbot
 - /register -> Se registra el usuario y te redirige a /login
 - /health -> Muestra el estado del frontend y el backend
 
