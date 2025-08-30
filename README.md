@@ -94,6 +94,11 @@ El proyecto incluye MailHog para capturar emails en desarrollo:
 - Web UI: http://localhost:8025
 - Todos los emails enviados se visualizan ahí (recuperación de contraseña, etc.)
 
+## Frontend
+- /login -> Para iniciar sesion, te lleva a /health
+- /register -> Se registra el usuario y te redirige a /login
+- /health -> Muestra el estado del frontend y el backend
+
 ## 🏗️ Estructura del proyecto
 ```
 pami-asistente/
@@ -119,6 +124,15 @@ pami-asistente/
 ├── frontend/            # React App
 │   ├── public/
 │   ├── src/
+│   │   ├── api/
+│   │   │   └── auth.js 
+│   │   ├── pages/ 
+│   │   │   ├── health.css
+│   │   │   ├── health.js
+│   │   │   ├── login.css
+│   │   │   ├── login.js
+│   │   │   ├── register.css
+│   │   │   └── register.js 
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
@@ -141,7 +155,7 @@ pami-asistente/
 - [x] Endpoints de registro y login
 - [x] Endpoints de recuperación de contraseña
 - [x] Endpoints de admin (listar, crear y eliminar usuarios)
-- [ ] Pantallas de login/registro en React
+- [x] Pantallas de login/registro en React
 
 ---
 
