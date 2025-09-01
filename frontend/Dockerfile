@@ -1,28 +1,19 @@
-# Etapa de build
-FROM node:18-alpine as build
+# Dockerfile para desarrollo con hot reloading
+FROM node:18-alpine
 
 WORKDIR /app
 
 # Copiar package files
 COPY package*.json ./
 
-# Instalar dependencias
-RUN npm ci --only=production
+# Instalar dependencias (incluye dev dependencies para desarrollo)
+RUN npm install
 
 # Copiar código fuente
-COPY public/ ./public
-COPY src/ ./src
+COPY . .
 
-# Construir la app
-RUN npm run build
+# Exponer puerto del dev server
+EXPOSE 3000
 
-# Etapa de producción con Nginx
-FROM nginx:alpine
-
-# Copiar build de React
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Configuración de Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
+# Comando para desarrollo con hot reloading
+CMD ["npm", "start"]

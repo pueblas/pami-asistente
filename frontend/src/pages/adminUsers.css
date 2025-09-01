@@ -1,0 +1,173 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: cover;
+  width: 100vw;
+  padding: 2rem;
+}
+
+.admin-box {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+  width: 80vw;
+  max-width: 1000px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.admin-box h2 {
+  color: #333;
+  margin: 0;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.users-table {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.users-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.users-table th,
+.users-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.users-table th {
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+}
+
+.users-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.users-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.no-users {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin: 2rem 0;
+}
+
+.admin-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  padding: 0.8rem 2rem;
+  background: gray;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+
+.delete-btn {
+  padding: 0.5rem 1rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+.create-user-btn {
+  padding: 0.8rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 20%;
+}
+
+.create-user-btn:hover {
+  background: #218838;
+}
+
+.create-user-form {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid #dee2e6;
+}
+
+.create-user-form h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.create-user-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.create-user-form input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  padding: 0.8rem 2rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  align-self: flex-start;
+}
+
+.submit-btn:hover {
+  background: #0056b3;
+}
