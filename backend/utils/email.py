@@ -11,7 +11,7 @@ def send_recovery_email(to_email: str, token: str):
     SMTP_PORT = int(os.getenv("SMTP_PORT", 1025))
     
     # Crear link de recuperación
-    reset_link = f"http://localhost:3000/reset-password?token={token}"
+    reset_link = f"http://localhost:3000/reset?token={token}"
     
     # Crear mensaje
     message = MIMEMultipart("alternative")
@@ -26,8 +26,8 @@ def send_recovery_email(to_email: str, token: str):
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
           <h2 style="color: #333;">Recuperación de Contraseña</h2>
           <p>Hola,</p>
-          <p>Recibimos una solicitud para restablecer tu contraseña en PAMI Asistente.</p>
-          <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
+          <p>Recibimos una solicitud para restablecer tu contraseña en el Asistente de Trámites de PAMI.</p>
+          <p>Hacé clic en el siguiente enlace para crear una nueva contraseña:</p>
           <div style="margin: 30px 0;">
             <a href="{reset_link}" 
                style="background-color: #667eea; color: white; padding: 12px 30px; 
@@ -36,14 +36,14 @@ def send_recovery_email(to_email: str, token: str):
             </a>
           </div>
           <p style="color: #666; font-size: 14px;">
-            Si no solicitaste este cambio, puedes ignorar este email.
+            Si no solicitaste este cambio, podés ignorar este correo.
           </p>
           <p style="color: #666; font-size: 14px;">
             Este enlace expirará en 1 hora por seguridad.
           </p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
           <p style="color: #999; font-size: 12px;">
-            PAMI Asistente - Sistema de Asistencia Virtual
+            Asistente de Trámites - PAMI
           </p>
         </div>
       </body>

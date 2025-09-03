@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUsuario } from '../api/auth';
 import './login.css';
+import { Link } from 'react-router-dom';
 
 
 function Login() {
@@ -56,6 +57,11 @@ function Login() {
             required
           />
           <button type="submit">Entrar</button>
+          <div className="mt-4 text-center">
+            <Link to="/recover" className="text-sm text-blue-600 hover:text-blue-800">
+              Olvidé mi contraseña
+            </Link>
+          </div>
         </form>
         <div className="register-link">
           ¿No tenés cuenta?{" "}
