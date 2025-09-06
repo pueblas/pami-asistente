@@ -5,6 +5,7 @@ import Register from './pages/register';
 import AdminUsers from './pages/adminUsers';
 import Recover from './pages/recover';
 import Reset from './pages/reset';
+import Chat from "./pages/chat";
 
 function App() {
   return (
