@@ -107,9 +107,6 @@
   transition: background 0.3s;
 }
 
-.delete-btn:hover {
-  background: #c82333;
-}
 
 .create-user-btn {
   padding: 0.8rem 1.5rem;

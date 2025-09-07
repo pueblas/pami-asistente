@@ -1,12 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './pages/login';
-import Health from './pages/health';
-import Register from './pages/register';
-import AdminUsers from './pages/adminUsers';
-import Recover from './pages/recover';
-import Reset from './pages/reset';
-import Chat from "./pages/chat";
-
+import { Login, Health, Register, AdminUsers, Recover, Reset, Chat } from './pages'; 
+  
 function App() {
   return (
     <BrowserRouter>

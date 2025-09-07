@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers, deleteUser, createAdminUser } from '../api/auth';
+import { MdDelete } from 'react-icons/md';
+import { fetchUsers, deleteUser, createAdminUser } from '../../api/auth';
 import './adminUsers.css';
 
 function AdminUsers() {
@@ -167,8 +168,8 @@ function AdminUsers() {
           <table>
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Nombre</th>
-                <th>Apellido</th>
                 <th>Email</th>
                 <th>Fecha Registro</th>
                 <th>Acciones</th>
@@ -186,7 +187,7 @@ function AdminUsers() {
                       className="delete-btn"
                       onClick={() => handleDeleteUser(user.id_usuario, user.correo_electronico)}
                     >
-                      Eliminar
+                      <MdDelete size={25}/>
                     </button>
                   </td>
                 </tr>

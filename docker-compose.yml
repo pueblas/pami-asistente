@@ -24,6 +24,7 @@ services:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
       - ./frontend/package.json:/app/package.json
+      - ./frontend/package-lock.json:/app/package-lock.json
       - /app/node_modules  # Evita sobrescribir node_modules
     environment:
       - WATCHPACK_POLLING=true
