@@ -6,7 +6,6 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-size: cover;
   width: 100vw;
-  padding: 2rem;
 }
 
 .admin-box {
@@ -86,13 +85,17 @@
 
 .logout-btn {
   padding: 0.8rem 2rem;
-  background: gray;
+  background: #A8BAD5;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
+}
+
+.admin-container .logout-btn:hover {
+  background: #879BB8;
 }
 
 
@@ -105,6 +108,10 @@
   font-size: 14px;
   cursor: pointer;
   transition: background 0.3s;
+}
+
+.admin-container .delete-btn:hover {
+  background: #c82333;
 }
 
 
@@ -121,7 +128,7 @@
 }
 
 .create-user-btn:hover {
-  background: #218838;
+  background: #5a6fd8;
 }
 
 .create-user-form {
