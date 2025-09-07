@@ -75,13 +75,12 @@
   background-color: #f0f0f0;
 }
 
-body {
-    padding-top: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #a8a8a8;
+.chat-wrapper {
+  background-color: #c6c4c4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .chat-container {
