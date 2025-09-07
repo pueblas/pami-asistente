@@ -70,51 +70,52 @@ function Chat() {
           </div>
         )}
       </header>
-
-      <div className="chat-container">
-        <div className="chat-box">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={msg.author === "user" ? "user-msg" : "bot-msg"}
-            >
-              <div className="msg-text">{msg.text}</div>
-              <div className="msg-time">
-                {msg.timestamp.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </div>
-              {msg.author === "bot" && (
-                <div className="feedback-buttons">
-                  <button
-                    className="thumb-btn"
-                    onClick={() => enviarFeedback("up")}
-                  >
-                    👍
-                  </button>
-                  <button
-                    className="thumb-btn"
-                    onClick={() => enviarFeedback("down")}
-                  >
-                    👎
-                  </button>
+      <div className="chat-wrapper">
+        <div className="chat-container">
+          <div className="chat-box">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={msg.author === "user" ? "user-msg" : "bot-msg"}
+              >
+                <div className="msg-text">{msg.text}</div>
+                <div className="msg-time">
+                  {msg.timestamp.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
-              )}
-            </div>
-          ))}
+                {msg.author === "bot" && (
+                  <div className="feedback-buttons">
+                    <button
+                      className="thumb-btn"
+                      onClick={() => enviarFeedback("up")}
+                    >
+                      👍
+                    </button>
+                    <button
+                      className="thumb-btn"
+                      onClick={() => enviarFeedback("down")}
+                    >
+                      👎
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
 
-          <div className="chat-input">
-            <input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="🔍 Pregunta de PAMI"
-            />
-            <button onClick={sendAudio}>
-              <i className="fa-solid fa-microphone"></i>
-            </button>
-            <button onClick={sendMessage}>Enviar</button>
+            <div className="chat-input">
+              <input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                placeholder="🔍 Pregunta de PAMI"
+              />
+              <button onClick={sendAudio}>
+                <i className="fa-solid fa-microphone"></i>
+              </button>
+              <button onClick={sendMessage}>Enviar</button>
+            </div>
           </div>
         </div>
       </div>
