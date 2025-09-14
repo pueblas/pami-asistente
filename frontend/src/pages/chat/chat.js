@@ -1,23 +1,20 @@
 import React, { useState } from "react";
 import "./chat.css";
+import { useNavigate } from 'react-router-dom';
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const navigate = useNavigate();
 
   const userButton = () => {
     setMenuAbierto(!menuAbierto);
   };
 
-  const perfilUser = () => {
-    console.log("Abrir perfil del usuario");
-    setMenuAbierto(false);
-  };
-
   const closeSesion = () => {
-    console.log("Cerrar sesión");
-    setMenuAbierto(false);
+    localStorage.removeItem("access-token");
+    navigate('/login')
   };
 
   const sendMessage = () => {
@@ -64,7 +61,6 @@ function Chat() {
         {menuAbierto && (
           <div className="dropdown-menu">
             <ul>
-              <li onClick={perfilUser}>Perfil</li>
               <li onClick={closeSesion}>Cerrar sesión</li>
             </ul>
           </div>
