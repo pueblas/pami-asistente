@@ -21,7 +21,7 @@ function Login() {
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", role);
       if(role == 'usuario'){
-        navigate('/chatbot')
+        navigate('/chat')
       }
       else{
         navigate('/admin-center')
