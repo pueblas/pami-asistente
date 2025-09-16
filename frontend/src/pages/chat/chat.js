@@ -13,7 +13,8 @@ function Chat() {
   };
 
   const closeSesion = () => {
-    localStorage.removeItem("access-token");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("role");
     navigate('/login')
   };
 
