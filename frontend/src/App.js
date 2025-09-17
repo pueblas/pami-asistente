@@ -11,7 +11,7 @@ function App() {
         <Route path='/admin-center' element={<AdminUsers/>} />
         <Route path="/recover" element={<Recover />} />
         <Route path="/reset" element={<Reset />} />
-        <Route path="/chatbot" element={<Chat />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   );
