@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.connection import engine, Base
 from models import user, role
 from db.init_data import create_initial_data
-from routes import auth, admin
+from routes import auth, admin, chat
 
 # Crear las tablas
 Base.metadata.create_all(bind=engine)
@@ -25,6 +25,7 @@ app.add_middleware(
 # Incluir rutas
 app.include_router(auth.router)
 app.include_router(admin.router)
+app.include_router(chat.router)
 
 @app.get("/")
 def read_root():

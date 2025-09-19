@@ -83,12 +83,17 @@ El sistema crea automáticamente:
 ### Autenticación
 - `POST /auth/register` - Registro de nuevo usuario
 - `POST /auth/login` - Login (retorna JWT token)
+- `POST /auth/recover` - Recupero de contraseña
+- `POST /auth/reset` - Reset de contraseña
 
 ### Admin
 Requieren token con rol "administrador":
 - `GET /admin/users` - Listar todos los usuarios
 - `POST /admin/users` - Crear nuevo administrador
 - `DELETE /admin/users/{id}` - Eliminar usuario
+
+### Chat
+- `POST /chat/consulta` - Consulta a IA
 
 ### Documentación interactiva
 - Swagger UI: http://localhost:8000/docs
@@ -128,9 +133,11 @@ pami-asistente/
 │   │   └── role.py
 │   ├── routes/          # Endpoints de la API
 │   │   ├── auth.py     # Autenticación y registro
-│   │   └── admin.py    # Administración
+│   │   ├── admin.py    # Administración
+|   |   └── chat.py     # Chat
 │   ├── schemas/         # Validación con Pydantic
-│   │   └── user.py
+│   │   ├── user.py
+|   |   └── chat.py     
 │   ├── utils/           # Utilidades
 │   │   ├── auth.py     # JWT y hashing
 │   │   ├── email.py    # Envío de emails
