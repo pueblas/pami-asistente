@@ -24,6 +24,7 @@ docker-compose up --build
 3. Acceder a la aplicación:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
+- Ollama/Nodo IA: http://localhost:11434
 - Health check: http://localhost:8000/health
 
 4. Usuario admin por defecto:
@@ -35,6 +36,22 @@ docker-compose up --build
 - O correr en otra terminal:
 ```bash
 docker-compose down
+```
+
+## 🤖 Nodo de IA (Ollama)
+### Modelo LLM
+El sistema utiliza **llama3.2:3b** como modelo de lenguaje base:
+- Se descarga automáticamente la primera vez (puede tardar varios minutos)
+- Queda cacheado en un volumen persistente para futuros usos
+- Tamaño aproximado: 2GB
+
+### Verificar el modelo:
+```bash
+# Ver modelos instalados
+docker exec pami-nodo-ia ollama list
+
+# Probar el modelo directamente
+docker exec pami-nodo-ia ollama run llama3.2:3b "Hola"
 ```
 
 ## 🗄️ Base de Datos
@@ -136,6 +153,9 @@ pami-asistente/
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
+├── nodo-ia/             # Nodo de IA con Ollama
+│   ├── Dockerfile       # Imagen personalizada de Ollama
+│   └── entrypoint.sh    # Script de inicialización
 ├── database/            # Almacenamiento SQLite (pami.db)
 ├── docker-compose.yml
 └── README.md
@@ -145,17 +165,6 @@ pami-asistente/
 - Juan Bautista Rueda
 - Eugenio Provenzano
 - Joaquín Lino Alonso
-
-## 📝 Estado del Proyecto
-**Checkpoint 1** - En desarrollo 🔨
-- [x] Estructura Docker básica
-- [x] Frontend React con comunicación al backend
-- [x] Base de datos SQLite con persistencia
-- [x] Sistema de autenticación JWT
-- [x] Endpoints de registro y login
-- [x] Endpoints de recuperación de contraseña
-- [x] Endpoints de admin (listar, crear y eliminar usuarios)
-- [x] Pantallas de login/registro en React
 
 ---
 

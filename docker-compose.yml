@@ -10,10 +10,12 @@ services:
       - ENVIRONMENT=development
       - SMTP_HOST=mailhog
       - SMTP_PORT=1025
+      - OLLAMA_BASE_URL=http://nodo-ia:11434
     networks:
       - pami-network
     depends_on:
       - mailhog
+      - nodo-ia
 
   frontend:
     build: ./frontend
@@ -40,6 +42,22 @@ services:
       - "8025:8025"
     networks:
       - pami-network
+
+  nodo-ia:
+    build: ./nodo-ia
+    container_name: pami-nodo-ia
+    ports:
+      - "11434:11434"
+    volumes:
+      - nodo_ia_models:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    networks:
+      - pami-network
+    restart: unless-stopped
+
+volumes:
+  nodo_ia_models:
 
 networks:
   pami-network:
