@@ -18,6 +18,8 @@ from utils.auth import (
 )
 from utils.email import send_recovery_email
 
+from utils.auth import validar_password
+
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=UserResponse)
@@ -35,6 +37,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             detail="El correo electrónico ya está registrado"
         )
     
+    if not validar_password(user.password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Contraseña no valida")
+
     # Crear nuevo usuario
     db_user = Usuario(
         primer_nombre=user.primer_nombre,
@@ -161,6 +167,11 @@ def reset_password(token: str, new_password: str, db: Session = Depends(get_db))
             detail="Token no válido para este usuario"
         )
     
+    if not validar_password(new_password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Contraseña no valida")
+
+
     # Actualizar contraseña
     user.contraseña = get_password_hash(new_password)
     user.token_recuperacion = None  # Limpiar token usado

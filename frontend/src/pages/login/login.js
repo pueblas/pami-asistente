@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -49,15 +50,24 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className='ver-psw'>
+              <input
+              type={showPassword ? "text" : "password"}
+              placeholder='Constraseña'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              
+            />
+              <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Ver"}
+            </button>
+            </div>
           <button type="submit">Entrar</button>
-          <div className="mt-4 text-center">
+          <div className="recover">
             <Link to="/recover" className="text-sm text-blue-600 hover:text-blue-800">
               Olvidé mi contraseña
             </Link>

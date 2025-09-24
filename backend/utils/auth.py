@@ -52,3 +52,11 @@ def create_reset_token(email: str):
     # Token válido por 1 hora
     expires = timedelta(hours=1)
     return create_access_token(data=data, expires_delta=expires)
+
+
+def validar_password(password: str) -> bool:
+    return (
+        any(c.isdigit() for c in password) and
+        any(c.isupper() for c in password) and
+        any(not c.isalnum() for c in password)
+    )

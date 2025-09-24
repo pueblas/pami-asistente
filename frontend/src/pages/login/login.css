@@ -62,6 +62,22 @@
   font-size: 1rem;
 }
 
+.recover{
+  text-align: center;
+}
+
+.ver-psw{
+  position: relative;
+  display: flex;
+  align-items: center;
+
+}
+
+.ver-psw button{
+  width: 20%;
+  height: 100%;
+  margin-bottom: 1rem;
+}
 
 @keyframes backgroundSmooth {
   0% {
