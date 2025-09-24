@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import { useState, useEffect } from 'react';
 import "./chat.css";
 import { useNavigate } from 'react-router-dom';
+import { fetchUsers} from '../../api/auth';
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const userButton = () => {
     setMenuAbierto(!menuAbierto);
@@ -52,6 +55,20 @@ function Chat() {
   const sendAudio = () => {
     sendMessage();
   };
+
+  useEffect(() => {
+  const validarAcceso = () => {
+    const token = localStorage.getItem('access_token');
+    const role = localStorage.getItem('role');
+
+    if (!token || role !== 'usuario') {
+      navigate('/login');
+    } else {
+      setLoading(false);
+    }
+  };
+  validarAcceso();
+  }, [navigate]);
 
   return (
     <>
