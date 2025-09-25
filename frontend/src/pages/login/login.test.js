@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import Login from './login';
 
-// Mock axios first to avoid import issues
+
 jest.mock('axios', () => ({
   post: jest.fn(),
   get: jest.fn(),
   delete: jest.fn(),
 }));
 
-// Mock the auth API
+
 jest.mock('../../api/auth', () => ({
   loginUsuario: jest.fn(),
 }));
@@ -18,14 +18,12 @@ jest.mock('../../api/auth', () => ({
 import { loginUsuario } from '../../api/auth';
 const mockLoginUsuario = loginUsuario;
 
-// Mock useNavigate
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-// Mock localStorage
 const localStorageMock = {
   setItem: jest.fn(),
   getItem: jest.fn(),
@@ -36,7 +34,7 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock
 });
 
-// Mock console.log to avoid noise in tests
+
 jest.spyOn(console, 'log').mockImplementation(() => {});
 
 function renderLogin() {
@@ -49,11 +47,10 @@ function renderLogin() {
 
 describe('Login Component', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
-  // UI Tests
+
   describe('renders correctly', () => {
     test('displays all form elements', () => {
       renderLogin();
@@ -79,7 +76,7 @@ describe('Login Component', () => {
     });
   });
 
-  // Functionality Tests
+
   describe('login functionality', () => {
     test('successful login with user role navigates to chat', async () => {
     // Arrange: Mock successful API response
