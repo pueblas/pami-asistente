@@ -53,7 +53,7 @@ function Login() {
           <div className='ver-psw'>
               <input
               type={showPassword ? "text" : "password"}
-              placeholder='Constraseña'
+              placeholder='Contraseña'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
