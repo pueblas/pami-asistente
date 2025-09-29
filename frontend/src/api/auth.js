@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/auth/';
 const ADMIN_API_URL = 'http://localhost:8000/admin/';
+const CHAT_API_URL = 'http://localhost:8000/chat/';
 
 export async function loginUsuario(email, password) {
   const data = {
@@ -61,3 +62,33 @@ export async function createAdminUser(userData, token) {
   return response.data;
 }
 
+// ===== FUNCIONES DE CHAT =====
+
+export async function enviarConsulta(mensaje, token) {
+  const response = await axios.post(
+    `${CHAT_API_URL}consulta`,
+    { mensaje: mensaje },
+    { 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } 
+    }
+  );
+
+  return response.data;
+}
+
+export async function limpiarContexto(token) {
+  const response = await axios.delete(
+    `${CHAT_API_URL}contexto`,
+    { 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } 
+    }
+  );
+
+  return response.data;
+}

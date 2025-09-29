@@ -1,28 +1,39 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from "react";
 import "./chat.css";
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers} from '../../api/auth';
+import { enviarConsulta, limpiarContexto } from '../../api/auth';
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const userButton = () => {
     setMenuAbierto(!menuAbierto);
   };
 
-  const closeSesion = () => {
+  const closeSesion = async () => {
+    const token = localStorage.getItem("access_token");
+    
+    // Limpiar contexto en el backend
+    if (token) {
+      try {
+        await limpiarContexto(token);
+      } catch (error) {
+        console.error("Error limpiando contexto:", error);
+      }
+    }
+    
+    // Limpiar localStorage y redirigir
     localStorage.removeItem("access_token");
     localStorage.removeItem("role");
-    navigate('/login')
+    navigate('/login');
   };
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
+  const sendMessage = async () => {
+    if (newMessage.trim() && !isLoading) {
       const userMsg = {
         author: "user",
         text: newMessage.trim(),
@@ -30,17 +41,33 @@ function Chat() {
       };
 
       setMessages((prev) => [...prev, userMsg]);
+      setNewMessage("");
+      setIsLoading(true);
 
-      setTimeout(() => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await enviarConsulta(userMsg.text, token);
+
         const botMsg = {
           author: "bot",
-          text: "Respuesta automática",
+          text: response.respuesta,
           timestamp: new Date(),
         };
+        
         setMessages((prev) => [...prev, botMsg]);
-      }, 1000);
-
-      setNewMessage("");
+      } catch (error) {
+        console.error("Error enviando consulta:", error);
+        
+        const errorMsg = {
+          author: "bot",
+          text: "Lo siento, hubo un error al procesar tu consulta. Por favor, intentá nuevamente.",
+          timestamp: new Date(),
+        };
+        
+        setMessages((prev) => [...prev, errorMsg]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -53,22 +80,9 @@ function Chat() {
   };
 
   const sendAudio = () => {
-    sendMessage();
+    // Funcionalidad de audio pendiente para futuro sprint
+    console.log("Funcionalidad de audio pendiente");
   };
-
-  useEffect(() => {
-  const validarAcceso = () => {
-    const token = localStorage.getItem('access_token');
-    const role = localStorage.getItem('role');
-
-    if (!token || role !== 'usuario') {
-      navigate('/login');
-    } else {
-      setLoading(false);
-    }
-  };
-  validarAcceso();
-  }, [navigate]);
 
   return (
     <>
@@ -118,17 +132,26 @@ function Chat() {
               </div>
             ))}
 
+            {isLoading && (
+              <div className="bot-msg">
+                <div className="msg-text">Escribiendo...</div>
+              </div>
+            )}
+
             <div className="chat-input">
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="🔍 Pregunta de PAMI"
+                disabled={isLoading}
               />
-              <button onClick={sendAudio}>
+              <button onClick={sendAudio} disabled={isLoading}>
                 <i className="fa-solid fa-microphone"></i>
               </button>
-              <button onClick={sendMessage}>Enviar</button>
+              <button onClick={sendMessage} disabled={isLoading}>
+                Enviar
+              </button>
             </div>
           </div>
         </div>
