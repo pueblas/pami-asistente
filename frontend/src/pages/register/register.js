@@ -3,16 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './register.css';
 
+
+
 function Register() {
   const [primerNombre, setPrimerNombre] = useState('');
   const [segundoNombre, setSegundoNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const API_URL = 'http://localhost:8000/auth/'; // Cambiar por tu URL real
+  const API_URL = 'http://localhost:8000/auth/';
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -42,7 +45,7 @@ function Register() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <form onSubmit={handleRegister}>
           <div>
-            <label>Primer nombre:</label>
+            <label>*Primer nombre:</label>
             <input
               type="text"
               value={primerNombre}
@@ -59,7 +62,7 @@ function Register() {
             />
           </div>
           <div>
-            <label>Apellido:</label>
+            <label>*Apellido:</label>
             <input
               type="text"
               value={apellido}
@@ -68,7 +71,7 @@ function Register() {
             />
           </div>
           <div>
-            <label>Email:</label>
+            <label>*Email:</label>
             <input
               type="email"
               value={email}
@@ -77,13 +80,24 @@ function Register() {
             />
           </div>
           <div>
-            <label>Contraseña:</label>
-            <input
-              type="password"
+            <label>*Contraseña:</label>
+            <div className='ver-psw'>
+              <input
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              
             />
+              <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Ver"}
+            </button>
+            </div>
+            
+            
           </div>
           <button type="submit">Crear cuenta</button>
           <div className='register-link'>

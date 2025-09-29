@@ -9,6 +9,8 @@ from schemas.user import UserResponse, UserCreate
 from utils.security import require_role
 from utils.auth import get_password_hash
 
+from utils.auth import validar_password
+
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.get("/users", response_model=List[UserResponse])
@@ -79,6 +81,10 @@ def create_admin_user(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El correo electrónico ya está registrado"
         )
+    
+    if not validar_password(user.password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="Contraseña no valida")
     
     # Crear nuevo usuario
     db_user = Usuario(

@@ -73,6 +73,20 @@
 }
 
 
+.ver-psw{
+  position: relative;
+  display: flex;
+  align-items: center;
+
+}
+
+.ver-psw button{
+  width: 20%;
+  height: 100%;
+  margin-bottom: 1rem;
+}
+
+
 @keyframes backgroundSmooth {
   0% {
     background: linear-gradient(135deg, #3aaf7b, #1f8a70);
