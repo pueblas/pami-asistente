@@ -22,6 +22,7 @@ class UserLogin(BaseModel):
 class UserResponse(UserBase):
     id_usuario: int
     fecha_creacion: datetime
+    rol: Optional[str] = "usuario"
     
     class Config:
         from_attributes = True  # Para trabajar con SQLAlchemy

@@ -62,6 +62,21 @@ export async function createAdminUser(userData, token) {
   return response.data;
 }
 
+export async function updateUserRole(userId, newRole, token) {
+  const response = await axios.put(
+    `${ADMIN_API_URL}users/${userId}/role`,
+    { new_role: newRole },
+    { 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } 
+    }
+  );
+
+  return response.data;
+}
+
 // ===== FUNCIONES DE CHAT =====
 
 export async function enviarConsulta(mensaje, token) {

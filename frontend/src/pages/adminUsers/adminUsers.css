@@ -175,3 +175,158 @@
 .submit-btn:hover {
   background: #0056b3;
 }
+
+/* Config button styles */
+.config-btn {
+  padding: 0.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.config-btn:hover {
+  background: #5a6268;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.modal-content p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.modal-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.modal-actions {
+  margin: 2rem 0;
+}
+
+.role-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.role-section h4 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.role-btn {
+  padding: 0.6rem 1.2rem;
+  margin-right: 0.5rem;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.role-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.role-btn.active {
+  background: #667eea;
+  color: white;
+}
+
+.role-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.danger-section {
+  margin-top: 1.5rem;
+}
+
+.danger-section h4 {
+  margin-bottom: 1rem;
+  color: #dc3545;
+}
+
+.delete-user-btn {
+  padding: 0.6rem 1.2rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.delete-user-btn:hover {
+  background: #c82333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid #dee2e6;
+  padding-top: 1rem;
+}
+
+.cancel-btn {
+  padding: 0.6rem 1.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+}

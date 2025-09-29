@@ -20,7 +20,28 @@ def get_all_users(
 ):
     """Listar todos los usuarios (solo admin)"""
     users = db.query(Usuario).all()
-    return users
+    
+    # Obtener roles para cada usuario
+    users_with_roles = []
+    for user in users:
+        # Buscar el rol del usuario
+        user_role = db.query(Rol.nombre_rol).join(
+            usuario_rol, Rol.id_rol == usuario_rol.c.id_rol
+        ).filter(usuario_rol.c.id_usuario == user.id_usuario).first()
+        
+        # Crear dict con datos del usuario y su rol
+        user_data = {
+            "id_usuario": user.id_usuario,
+            "primer_nombre": user.primer_nombre,
+            "segundo_nombre": user.segundo_nombre,
+            "apellido": user.apellido,
+            "correo_electronico": user.correo_electronico,
+            "fecha_creacion": user.fecha_creacion,
+            "rol": user_role[0] if user_role else "usuario"
+        }
+        users_with_roles.append(user_data)
+    
+    return users_with_roles
 
 @router.delete("/users/{user_id}")
 def delete_user(
@@ -109,3 +130,73 @@ def create_admin_user(
         db.commit()
     
     return db_user
+
+@router.put("/users/{user_id}/role")
+def update_user_role(
+    user_id: int,
+    role_data: dict,
+    db: Session = Depends(get_db),
+    admin = Depends(require_role("administrador"))
+):
+    """Actualizar el rol de un usuario (solo admin)"""
+    
+    # Extraer el nuevo rol del body
+    new_role = role_data.get("new_role")
+    if not new_role:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El campo 'new_role' es requerido"
+        )
+    
+    # Verificar que el rol sea válido
+    if new_role not in ["usuario", "administrador"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Rol inválido. Debe ser 'usuario' o 'administrador'"
+        )
+    
+    # Verificar que el usuario existe
+    user = db.query(Usuario).filter(Usuario.id_usuario == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuario no encontrado"
+        )
+    
+    # Obtener el ID del admin actual
+    current_user_id = admin.get("user_id")
+    
+    # No permitir cambiar el rol propio
+    if user_id == current_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No podés cambiar tu propio rol"
+        )
+    
+    # No permitir cambiar el rol del admin principal del sistema
+    if user.correo_electronico == "admin@caece.edu.ar":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se puede cambiar el rol del admin principal del sistema"
+        )
+    
+    # Obtener los roles
+    target_role = db.query(Rol).filter(Rol.nombre_rol == new_role).first()
+    if not target_role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Rol '{new_role}' no encontrado"
+        )
+    
+    # Eliminar roles existentes del usuario
+    db.execute(usuario_rol.delete().where(usuario_rol.c.id_usuario == user_id))
+    
+    # Asignar el nuevo rol
+    db.execute(usuario_rol.insert().values(
+        id_usuario=user_id,
+        id_rol=target_role.id_rol
+    ))
+    
+    db.commit()
+    
+    return {"message": f"Rol de usuario {user_id} actualizado a {new_role}"}
