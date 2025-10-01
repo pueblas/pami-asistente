@@ -7,12 +7,14 @@ jest.mock('../../api/auth', () => ({
   fetchUsers: jest.fn(),
   deleteUser: jest.fn(),
   createAdminUser: jest.fn(),
+  updateUserRole: jest.fn(),
 }));
 
-import { fetchUsers, deleteUser, createAdminUser } from '../../api/auth';
+import { fetchUsers, deleteUser, createAdminUser, updateUserRole } from '../../api/auth';
 const mockFetchUsers = fetchUsers;
 const mockDeleteUser = deleteUser;
 const mockCreateAdminUser = createAdminUser;
+const mockUpdateUserRole = updateUserRole;
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -49,6 +51,7 @@ const mockUsers = [
     primer_nombre: 'Juan',
     apellido: 'Pérez',
     correo_electronico: 'juan@test.com',
+    rol: 'usuario',
     fecha_creacion: '2024-01-01T00:00:00Z'
   },
   {
@@ -56,6 +59,7 @@ const mockUsers = [
     primer_nombre: 'María',
     apellido: 'García',
     correo_electronico: 'maria@test.com',
+    rol: 'administrador',
     fecha_creacion: '2024-01-02T00:00:00Z'
   }
 ];
@@ -91,6 +95,7 @@ describe('AdminUsers Component', () => {
       expect(screen.getByText('ID')).toBeInTheDocument();
       expect(screen.getByText('Nombre')).toBeInTheDocument();
       expect(screen.getByText('Email')).toBeInTheDocument();
+      expect(screen.getByText('Rol')).toBeInTheDocument();
     });
 
     test('displays users in table', async () => {
@@ -102,6 +107,8 @@ describe('AdminUsers Component', () => {
         expect(screen.getByText('María García')).toBeInTheDocument();
         expect(screen.getByText('juan@test.com')).toBeInTheDocument();
         expect(screen.getByText('maria@test.com')).toBeInTheDocument();
+        expect(screen.getByText('usuario')).toBeInTheDocument();
+        expect(screen.getByText('administrador')).toBeInTheDocument();
       });
     });
   });
@@ -233,8 +240,120 @@ describe('AdminUsers Component', () => {
     });
   });
 
-  describe('user deletion', () => {
-    test('deletes user when confirmed', async () => {
+  describe('user modal functionality', () => {
+    test('opens modal when config button clicked', async () => {
+      mockFetchUsers.mockResolvedValue(mockUsers);
+      const user = userEvent.setup();
+      renderAdminUsers();
+      
+      await waitFor(() => {
+        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+      });
+      
+      // Find config button (should have settings icon)
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Verify modal is open
+      expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.textContent === 'Usuario: Juan Pérez';
+      })).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.textContent === 'Email: juan@test.com';
+      })).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.textContent === 'Rol actual: usuario';
+      })).toBeInTheDocument();
+    });
+
+    test('closes modal when cerrar button clicked', async () => {
+      mockFetchUsers.mockResolvedValue(mockUsers);
+      const user = userEvent.setup();
+      renderAdminUsers();
+      
+      await waitFor(() => {
+        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+      });
+      
+      // Open modal
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Verify modal is open
+      expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
+      
+      // Close modal
+      await user.click(screen.getByText('Cerrar'));
+      
+      // Verify modal is closed
+      expect(screen.queryByText('Configurar Usuario')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('role editing', () => {
+    test('updates user role from usuario to administrador', async () => {
+      mockFetchUsers.mockResolvedValue(mockUsers);
+      mockUpdateUserRole.mockResolvedValue({});
+      const user = userEvent.setup();
+      renderAdminUsers();
+      
+      await waitFor(() => {
+        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+      });
+      
+      // Open modal for Juan (usuario)
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Click Administrador button
+      await user.click(screen.getByText('Administrador'));
+      
+      await waitFor(() => {
+        expect(mockUpdateUserRole).toHaveBeenCalledWith(1, 'administrador', 'fake-token');
+      });
+      
+      expect(mockFetchUsers).toHaveBeenCalledTimes(2);
+    });
+
+    test('shows error when role update fails', async () => {
+      mockFetchUsers.mockResolvedValue(mockUsers);
+      mockUpdateUserRole.mockRejectedValue({
+        response: {
+          data: {
+            detail: 'No podés cambiar tu propio rol'
+          }
+        }
+      });
+      const user = userEvent.setup();
+      renderAdminUsers();
+      
+      await waitFor(() => {
+        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+      });
+      
+      // Open modal
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Try to change role
+      await user.click(screen.getByText('Administrador'));
+      
+      await waitFor(() => {
+        expect(screen.getByText('No podés cambiar tu propio rol')).toBeInTheDocument();
+      });
+      
+      // Modal should still be open
+      expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
+    });
+  });
+
+  describe('user deletion from modal', () => {
+    test('deletes user when confirmed from modal', async () => {
       mockFetchUsers.mockResolvedValue(mockUsers);
       mockDeleteUser.mockResolvedValue({});
       window.confirm.mockReturnValue(true);
@@ -245,9 +364,13 @@ describe('AdminUsers Component', () => {
         expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
       });
       
-      const deleteButtons = screen.getAllByRole('button');
-      const deleteButton = deleteButtons.find(btn => btn.querySelector('svg'));
-      await user.click(deleteButton);
+      // Open modal
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Click delete button in modal
+      await user.click(screen.getByText(/Eliminar Usuario/));
       
       expect(window.confirm).toHaveBeenCalledWith('¿Estás seguro de que querés eliminar al usuario juan@test.com?');
       
@@ -256,6 +379,8 @@ describe('AdminUsers Component', () => {
       });
       
       expect(mockFetchUsers).toHaveBeenCalledTimes(2);
+      // Modal should be closed after successful deletion
+      expect(screen.queryByText('Configurar Usuario')).not.toBeInTheDocument();
     });
 
     test('does not delete user when cancelled', async () => {
@@ -268,15 +393,22 @@ describe('AdminUsers Component', () => {
         expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
       });
       
-      const deleteButtons = screen.getAllByRole('button');
-      const deleteButton = deleteButtons.find(btn => btn.querySelector('svg'));
-      await user.click(deleteButton);
+      // Open modal
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Click delete button in modal
+      await user.click(screen.getByText(/Eliminar Usuario/));
       
       expect(window.confirm).toHaveBeenCalled();
       expect(mockDeleteUser).not.toHaveBeenCalled();
+      
+      // Modal should still be open
+      expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
     });
 
-    test('shows error when deletion fails', async () => {
+    test('shows error in modal when deletion fails', async () => {
       mockFetchUsers.mockResolvedValue(mockUsers);
       mockDeleteUser.mockRejectedValue({
         response: {
@@ -293,13 +425,20 @@ describe('AdminUsers Component', () => {
         expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
       });
       
-      const deleteButtons = screen.getAllByRole('button');
-      const deleteButton = deleteButtons.find(btn => btn.querySelector('svg'));
-      await user.click(deleteButton);
+      // Open modal
+      const configButtons = screen.getAllByRole('button');
+      const configButton = configButtons.find(btn => btn.querySelector('svg'));
+      await user.click(configButton);
+      
+      // Click delete button in modal
+      await user.click(screen.getByText(/Eliminar Usuario/));
       
       await waitFor(() => {
         expect(screen.getByText('No se puede eliminar este usuario')).toBeInTheDocument();
       });
+      
+      // Modal should still be open
+      expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
     });
   });
 
