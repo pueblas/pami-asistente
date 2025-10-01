@@ -17,7 +17,8 @@ function AdminUsers() {
     segundo_nombre: '',
     apellido: '',
     correo_electronico: '',
-    password: ''
+    password: '',
+    rol: 'usuario'
   });
   const navigate = useNavigate();
 
@@ -90,7 +91,8 @@ function AdminUsers() {
         segundo_nombre: '',
         apellido: '',
         correo_electronico: '',
-        password: ''
+        password: '',
+        rol: 'usuario'
       });
       setShowCreateForm(false);
       setError('');
@@ -156,14 +158,14 @@ function AdminUsers() {
             className="create-user-btn"
             onClick={() => setShowCreateForm(!showCreateForm)}
           >
-            {showCreateForm ? 'Cancelar' : 'Crear Admin'}
+            {showCreateForm ? 'Cancelar' : 'Crear Usuario'}
           </button>
         </div>
         {error && <p className="error-message">{error}</p>}
         
         {showCreateForm && (
           <div className="create-user-form">
-            <h3>Crear Nuevo Administrador</h3>
+            <h3>Crear Nuevo Usuario</h3>
             <form onSubmit={handleCreateUser}>
               <input
                 type="text"
@@ -199,7 +201,23 @@ function AdminUsers() {
                 onChange={(e) => setNewUser({...newUser, password: e.target.value})}
                 required
               />
-              <button type="submit" className="submit-btn">Crear Administrador</button>
+              
+              <div className="role-selection">
+                <label htmlFor="rol">Rol del Usuario:</label>
+                <select
+                  id="rol"
+                  value={newUser.rol}
+                  onChange={(e) => setNewUser({...newUser, rol: e.target.value})}
+                  required
+                >
+                  <option value="usuario">Usuario</option>
+                  <option value="administrador">Administrador</option>
+                </select>
+              </div>
+              
+              <button type="submit" className="submit-btn">
+                Crear {newUser.rol === 'administrador' ? 'Administrador' : 'Usuario'}
+              </button>
             </form>
           </div>
         )}

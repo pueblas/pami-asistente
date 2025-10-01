@@ -48,9 +48,15 @@ export async function deleteUser(userId, token) {
 }
 
 export async function createAdminUser(userData, token) {
+  // Mantener compatibilidad: si no se especifica rol, usar 'administrador'
+  const dataWithRole = {
+    ...userData,
+    rol: userData.rol || 'administrador'
+  };
+  
   const response = await axios.post(
     `${ADMIN_API_URL}users`,
-    userData,
+    dataWithRole,
     { 
       headers: { 
         'Authorization': `Bearer ${token}`,

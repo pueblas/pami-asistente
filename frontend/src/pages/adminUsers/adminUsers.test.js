@@ -90,7 +90,7 @@ describe('AdminUsers Component', () => {
         expect(screen.getByText('Gestión de Usuarios')).toBeInTheDocument();
       });
       
-      expect(screen.getByText('Crear Admin')).toBeInTheDocument();
+      expect(screen.getByText('Crear Usuario')).toBeInTheDocument();
       expect(screen.getByText('Cerrar Sesión')).toBeInTheDocument();
       expect(screen.getByText('ID')).toBeInTheDocument();
       expect(screen.getByText('Nombre')).toBeInTheDocument();
@@ -166,16 +166,17 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Crear Admin')).toBeInTheDocument();
+        expect(screen.getByText('Crear Usuario')).toBeInTheDocument();
       });
       
-      await user.click(screen.getByText('Crear Admin'));
+      await user.click(screen.getByText('Crear Usuario'));
       
-      expect(screen.getByText('Crear Nuevo Administrador')).toBeInTheDocument();
+      expect(screen.getByText('Crear Nuevo Usuario')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Primer Nombre')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Apellido')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+      expect(screen.getByLabelText('Rol del Usuario:')).toBeInTheDocument();
       expect(screen.getByText('Cancelar')).toBeInTheDocument();
     });
 
@@ -186,16 +187,18 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Crear Admin')).toBeInTheDocument();
+        expect(screen.getByText('Crear Usuario')).toBeInTheDocument();
       });
       
-      await user.click(screen.getByText('Crear Admin'));
+      await user.click(screen.getByText('Crear Usuario'));
       
       await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Carlos');
       await user.type(screen.getByPlaceholderText('Apellido'), 'López');
       await user.type(screen.getByPlaceholderText('Email'), 'carlos@test.com');
       await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
       
+      // Select administrator role
+      await user.selectOptions(screen.getByLabelText('Rol del Usuario:'), 'administrador');
       await user.click(screen.getByText('Crear Administrador'));
       
       await waitFor(() => {
@@ -204,7 +207,8 @@ describe('AdminUsers Component', () => {
           segundo_nombre: '',
           apellido: 'López',
           correo_electronico: 'carlos@test.com',
-          password: 'password123'
+          password: 'password123',
+          rol: 'administrador'
         }, 'fake-token');
       });
       
@@ -224,19 +228,54 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Crear Admin')).toBeInTheDocument();
+        expect(screen.getByText('Crear Usuario')).toBeInTheDocument();
       });
       
-      await user.click(screen.getByText('Crear Admin'));
+      await user.click(screen.getByText('Crear Usuario'));
       await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Carlos');
       await user.type(screen.getByPlaceholderText('Apellido'), 'López');
       await user.type(screen.getByPlaceholderText('Email'), 'carlos@test.com');
       await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+      await user.selectOptions(screen.getByLabelText('Rol del Usuario:'), 'administrador');
       await user.click(screen.getByText('Crear Administrador'));
       
       await waitFor(() => {
         expect(screen.getByText('Email ya existe')).toBeInTheDocument();
       });
+    });
+
+    test('creates new regular user successfully', async () => {
+      mockFetchUsers.mockResolvedValue(mockUsers);
+      mockCreateAdminUser.mockResolvedValue({});
+      const user = userEvent.setup();
+      renderAdminUsers();
+      
+      await waitFor(() => {
+        expect(screen.getByText('Crear Usuario')).toBeInTheDocument();
+      });
+      
+      await user.click(screen.getByText('Crear Usuario'));
+      
+      await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Ana');
+      await user.type(screen.getByPlaceholderText('Apellido'), 'Silva');
+      await user.type(screen.getByPlaceholderText('Email'), 'ana@test.com');
+      await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+      
+      // Keep default role (usuario) and submit
+      await user.click(screen.getByText('Crear Usuario'));
+      
+      await waitFor(() => {
+        expect(mockCreateAdminUser).toHaveBeenCalledWith({
+          primer_nombre: 'Ana',
+          segundo_nombre: '',
+          apellido: 'Silva',
+          correo_electronico: 'ana@test.com',
+          password: 'password123',
+          rol: 'usuario'
+        }, 'fake-token');
+      });
+      
+      expect(mockFetchUsers).toHaveBeenCalledTimes(2);
     });
   });
 

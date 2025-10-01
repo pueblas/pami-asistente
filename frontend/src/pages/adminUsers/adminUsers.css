@@ -151,13 +151,25 @@
   gap: 1rem;
 }
 
-.create-user-form input {
+.create-user-form input,
+.create-user-form select {
   width: 100%;
   padding: 0.8rem;
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 16px;
   box-sizing: border-box;
+}
+
+.role-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.role-selection label {
+  font-weight: 600;
+  color: #333;
 }
 
 .submit-btn {
