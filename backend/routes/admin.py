@@ -85,12 +85,12 @@ def delete_user(
     return {"message": f"Usuario {user_id} eliminado"}
 
 @router.post("/users", response_model=UserResponse)
-def create_admin_user(
+def create_user(
     user: UserCreate,
     db: Session = Depends(get_db),
     admin = Depends(require_role("administrador"))
 ):
-    """Crear un nuevo administrador (solo admin)"""
+    """Crear un nuevo usuario con rol especificado (solo admin)"""
     
     # Verificar si el email ya existe
     existing_user = db.query(Usuario).filter(
@@ -107,6 +107,13 @@ def create_admin_user(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Contraseña no valida")
     
+    # Validar que el rol sea válido
+    if user.rol not in ["usuario", "administrador"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Rol inválido. Debe ser 'usuario' o 'administrador'"
+        )
+    
     # Crear nuevo usuario
     db_user = Usuario(
         primer_nombre=user.primer_nombre,
@@ -120,12 +127,12 @@ def create_admin_user(
     db.commit()
     db.refresh(db_user)
     
-    # Asignar rol de administrador
-    admin_role = db.query(Rol).filter(Rol.nombre_rol == "administrador").first()
-    if admin_role:
+    # Asignar el rol especificado
+    target_role = db.query(Rol).filter(Rol.nombre_rol == user.rol).first()
+    if target_role:
         db.execute(usuario_rol.insert().values(
             id_usuario=db_user.id_usuario,
-            id_rol=admin_role.id_rol
+            id_rol=target_role.id_rol
         ))
         db.commit()
     

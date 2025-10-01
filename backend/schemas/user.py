@@ -12,6 +12,7 @@ class UserBase(BaseModel):
 # Schema para crear usuario (registro)
 class UserCreate(UserBase):
     password: str
+    rol: Optional[str] = "usuario"
 
 # Schema para login
 class UserLogin(BaseModel):
