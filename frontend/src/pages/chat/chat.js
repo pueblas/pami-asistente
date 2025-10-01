@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./chat.css";
 import { useNavigate } from 'react-router-dom';
 import { enviarConsulta, limpiarContexto } from '../../api/auth';
@@ -17,7 +17,6 @@ function Chat() {
   const closeSesion = async () => {
     const token = localStorage.getItem("access_token");
     
-    // Limpiar contexto en el backend
     if (token) {
       try {
         await limpiarContexto(token);
@@ -26,7 +25,6 @@ function Chat() {
       }
     }
     
-    // Limpiar localStorage y redirigir
     localStorage.removeItem("access_token");
     localStorage.removeItem("role");
     navigate('/login');
@@ -84,6 +82,19 @@ function Chat() {
     console.log("Funcionalidad de audio pendiente");
   };
 
+  useEffect(() => {
+    const validarAcceso = () => {
+      const token = localStorage.getItem('access_token');
+      const role = localStorage.getItem('role');
+      if (!token || role !== 'usuario') {
+        navigate('/login');
+      } else {
+        setIsLoading(false);
+      }
+    };
+    validarAcceso();
+  }, [navigate]);
+  
   return (
     <>
       <header className="top-bar">
