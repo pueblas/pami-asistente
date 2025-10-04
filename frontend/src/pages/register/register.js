@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './register.css';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 
@@ -34,7 +35,11 @@ function Register() {
       navigate('/login');
     } catch (err) {
       console.error("Error al registrar:", err);
-      setError('Error al registrar. ¿El email ya existe?');
+      if (err.response && err.response.status === 400) {
+        setError(err.response.data.detail);
+      } else {
+          setError('Error de servidor');
+        }
     }
   };
 
@@ -91,9 +96,10 @@ function Register() {
             />
               <button
               type="button"
+              className="toggle-psw"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Ver"}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
             </div>
             

@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { loginUsuario } from '../../api/auth';
 import './login.css';
 import { Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+
+
+
 
 
 function Login() {
@@ -30,9 +35,9 @@ function Login() {
     } catch (err) {
           console.error("Error en login:", err);
         if (err.response && err.response.status === 401) {
-          setError('Email o contraseña incorrecta');
+          setError(err.response.data.detail);
         } else {
-          setError('Error del servidor o de red');
+          setError('Error de servidor');
         }
       }
   };
@@ -51,21 +56,21 @@ function Login() {
             required
           />
           <div className='ver-psw'>
-              <input
+            <input
               type={showPassword ? "text" : "password"}
               placeholder='Contraseña'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              
             />
-              <button
+            <button
               type="button"
+              className="toggle-psw"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Ver"}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
-            </div>
+          </div>
           <button type="submit">Entrar</button>
           <div className="recover">
             <Link to="/recover" className="text-sm text-blue-600 hover:text-blue-800">

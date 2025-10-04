@@ -66,19 +66,39 @@
   text-align: center;
 }
 
-.ver-psw{
+.ver-psw {
   position: relative;
   display: flex;
   align-items: center;
-
 }
 
-.ver-psw button{
-  width: 20%;
-  height: 100%;
+.ver-psw input {
+  width: 100%;
+  padding: 0.5rem;
+  padding-right: 2.5rem;
   margin-bottom: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
+.ver-psw .toggle-psw {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 0.65rem;
+}
+
+.toggle-psw:hover,
+.toggle-psw:focus,
+.toggle-psw:active {
+  background: none !important; /* elimina el fondo azul */
+  outline: none;               /* elimina el borde del foco */
+  box-shadow: none;            /* elimina posibles sombras */
+}
 @keyframes backgroundSmooth {
   0% {
     background: linear-gradient(135deg, #3aaf7b, #1f8a70);
