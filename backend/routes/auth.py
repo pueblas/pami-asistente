@@ -176,6 +176,13 @@ def reset_password(token: str, new_password: str, db: Session = Depends(get_db))
             detail="Token no válido para este usuario"
         )
     
+    if verify_password(new_password, user.contraseña):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La nueva contraseña no puede ser igual a la anterior."
+        )
+    
+    print(user.contraseña)
     if not validar_password(new_password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Contraseña no valida")
