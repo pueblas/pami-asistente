@@ -1,37 +1,35 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import "./chat.css";
 import { useNavigate } from 'react-router-dom';
-import { enviarConsulta, limpiarContexto } from '../../api/auth';
+import { FaUserCircle } from "react-icons/fa";
+import { FiLogOut } from 'react-icons/fi';
+import TopBar from '../../components/TopBar';
+
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const userButton = () => {
     setMenuAbierto(!menuAbierto);
   };
 
-  const closeSesion = async () => {
-    const token = localStorage.getItem("access_token");
-    
-    if (token) {
-      try {
-        await limpiarContexto(token);
-      } catch (error) {
-        console.error("Error limpiando contexto:", error);
-      }
-    }
-    
+  const closeSesion = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("role");
-    navigate('/login');
+    navigate('/login')
   };
 
-  const sendMessage = async () => {
-    if (newMessage.trim() && !isLoading) {
+  const sendMessage = () => {
+    if (newMessage.trim()) {
       const userMsg = {
         author: "user",
         text: newMessage.trim(),
@@ -39,33 +37,17 @@ function Chat() {
       };
 
       setMessages((prev) => [...prev, userMsg]);
-      setNewMessage("");
-      setIsLoading(true);
 
-      try {
-        const token = localStorage.getItem("access_token");
-        const response = await enviarConsulta(userMsg.text, token);
-
+      setTimeout(() => {
         const botMsg = {
           author: "bot",
-          text: response.respuesta,
+          text: "Respuesta automática",
           timestamp: new Date(),
         };
-        
         setMessages((prev) => [...prev, botMsg]);
-      } catch (error) {
-        console.error("Error enviando consulta:", error);
-        
-        const errorMsg = {
-          author: "bot",
-          text: "Lo siento, hubo un error al procesar tu consulta. Por favor, intentá nuevamente.",
-          timestamp: new Date(),
-        };
-        
-        setMessages((prev) => [...prev, errorMsg]);
-      } finally {
-        setIsLoading(false);
-      }
+      }, 1000);
+
+      setNewMessage("");
     }
   };
 
@@ -78,8 +60,7 @@ function Chat() {
   };
 
   const sendAudio = () => {
-    // Funcionalidad de audio pendiente para futuro sprint
-    console.log("Funcionalidad de audio pendiente");
+    sendMessage();
   };
 
   useEffect(() => {
@@ -91,24 +72,27 @@ function Chat() {
       } else {
         setIsLoading(false);
       }
+      const base64Payload = token.split('.')[1];
+      const payload = JSON.parse(atob(base64Payload));
+
+      const fullName = payload.nombre_completo;
+      const email = payload.sub;
+
+      setUserName(fullName);
+      setUserEmail(email);
+      setUserRole(role);
+
     };
     validarAcceso();
   }, [navigate]);
-  
+
   return (
     <>
-      <header className="top-bar">
-        <button className="user-button" onClick={userButton}>
-          <img src="assets/usuario.jpg" alt="Usuario" />
-        </button>
-        {menuAbierto && (
-          <div className="dropdown-menu">
-            <ul>
-              <li onClick={closeSesion}>Cerrar sesión</li>
-            </ul>
-          </div>
-        )}
-      </header>
+      <TopBar
+        menuAbierto={menuAbierto}
+        onUserClick={() => setMenuAbierto(!menuAbierto)}
+        onLogoutClick={() => console.log("Cerrar sesión")}
+      />
       <div className="chat-wrapper">
         <div className="chat-container">
           <div className="chat-box">
@@ -143,26 +127,17 @@ function Chat() {
               </div>
             ))}
 
-            {isLoading && (
-              <div className="bot-msg">
-                <div className="msg-text">Escribiendo...</div>
-              </div>
-            )}
-
             <div className="chat-input">
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="🔍 Pregunta de PAMI"
-                disabled={isLoading}
               />
-              <button onClick={sendAudio} disabled={isLoading}>
+              <button onClick={sendAudio}>
                 <i className="fa-solid fa-microphone"></i>
               </button>
-              <button onClick={sendMessage} disabled={isLoading}>
-                Enviar
-              </button>
+              <button onClick={sendMessage}>Enviar</button>
             </div>
           </div>
         </div>
