@@ -74,22 +74,13 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
         Usuario.correo_electronico == user_login.correo_electronico
     ).first()
     
-    
-    if not user:
+    # Verificar que existe y la contraseña es correcta
+    if not user or not verify_password(user_login.password, user.contraseña):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email invalido",
+            detail="Alguno de los datos ingresados es incorrecto",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    if not verify_password(user_login.password, user.contraseña):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Contraseña incorrecta",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    
     
     # Obtener rol del usuario usando ORM
     user_role_entry = db.query(Rol).join(
@@ -100,6 +91,11 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     ).first()
     
     role_name = user_role_entry.nombre_rol if user_role_entry else "usuario"
+    nombre_completo = " ".join(filter(None, [
+        user.primer_nombre,
+        user.segundo_nombre,
+        user.apellido
+    ]))
     
     # Crear token con el rol incluido
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -107,7 +103,8 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
         data={
             "sub": user.correo_electronico,
             "user_id": user.id_usuario,
-            "role": role_name
+            "role": role_name,
+            "nombre_completo": nombre_completo
         },
         expires_delta=access_token_expires
     )
