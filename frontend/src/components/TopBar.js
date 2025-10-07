@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import './TopBar.css';
+import { limpiarContexto } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
 
 const TopBar = ({ menuAbierto, onUserClick}) => {
   const closeSesion = async () => {
@@ -20,6 +22,7 @@ const TopBar = ({ menuAbierto, onUserClick}) => {
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const validarAcceso = () => {
