@@ -3,7 +3,20 @@ import { FaUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import './TopBar.css';
 
-const TopBar = ({ menuAbierto, onUserClick, onLogoutClick }) => {
+const TopBar = ({ menuAbierto, onUserClick}) => {
+  const closeSesion = async () => {
+    const token = localStorage.getItem("access_token");
+    if (token && userRole == "usuario") {
+      try {
+        await limpiarContexto(token);
+      } catch (error) {
+        console.error("Error limpiando contexto:", error);
+      }
+    }
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("role");
+    navigate('/login');
+  };
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -57,7 +70,7 @@ const TopBar = ({ menuAbierto, onUserClick, onLogoutClick }) => {
             </div>
           </div>
           <ul>
-            <li className="logout-button" onClick={onLogoutClick}>
+            <li className="logout-button" onClick={closeSesion}>
               <FiLogOut className="logout-icon" />
               <span className="logout-text">Cerrar sesión</span>
             </li>
