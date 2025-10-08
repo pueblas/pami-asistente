@@ -79,6 +79,8 @@ def delete_user(
     # Verificar que no sea el último admin
     admin_role = db.query(Rol).filter(Rol.nombre_rol == "administrador").first()
     
+    db.execute(usuario_rol.delete().where(usuario_rol.c.id_usuario == user_id))
+
     db.delete(user)
     db.commit()
     
