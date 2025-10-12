@@ -69,27 +69,27 @@ function Recover() {
   };
 
   return (
-    <div className="recover-container">
-      <div className="recover-form-container">
-        <h2 className="recover-title">Recuperar Contraseña</h2>
-        <p className="recover-subtitle">
-          Ingresa tu correo electrónico y te enviaremos las instrucciones
+    <div className="recover__container">
+      <div className="recover__box">
+        <h2 className="recover__title">Recuperar Contraseña</h2>
+        <p className="recover__subtitle">
+          Ingresá tu correo electrónico y te enviaremos las instrucciones
         </p>
         
-        <form onSubmit={handleSubmit} className="recover-form">
+        <form onSubmit={handleSubmit} className="recover__form">
           {error && (
-            <div className="recover-error">
+            <div className="recover__error">
               {error}
             </div>
           )}
 
           {message && (
-            <div className="recover-success">
+            <div className="recover__success">
               {message}
             </div>
           )}
 
-          <div className="recover-form-group">
+          <div>
             <label htmlFor="email">Correo Electrónico</label>
             <input
               id="email"
@@ -100,20 +100,22 @@ function Recover() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
+              className="recover__input"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="recover-button"
+            className="recover__submit-button"
+            aria-label="Enviar instrucciones de recuperación"
           >
             {loading ? 'Enviando...' : 'Enviar Instrucciones'}
           </button>
         </form>
 
-        <div className="recover-back-link">
-          <Link to="/login">← Volver al inicio de sesión</Link>
+        <div className="recover__back-link">
+          <Link to="/login" aria-label="Volver a página de inicio de sesión">← Volver al inicio de sesión</Link>
         </div>
       </div>
     </div>

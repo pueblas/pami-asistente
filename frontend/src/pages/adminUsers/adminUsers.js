@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete, MdSettings } from 'react-icons/md';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchUsers, deleteUser, createAdminUser, updateUserRole } from '../../api/auth';
 import './adminUsers.css';
 
@@ -20,6 +21,7 @@ function AdminUsers() {
     password: '',
     rol: 'usuario'
   });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleOpenUserModal = (user) => {
@@ -95,6 +97,7 @@ function AdminUsers() {
         rol: 'usuario'
       });
       setShowCreateForm(false);
+      setShowPassword(false);
       setError('');
       
       // Refresh users list
@@ -141,8 +144,8 @@ function AdminUsers() {
 
   if (loading) {
     return (
-      <div className="admin-container">
-        <div className="admin-box">
+      <div className="admin__container">
+        <div className="admin__box">
           <p>Cargando usuarios...</p>
         </div>
       </div>
@@ -150,79 +153,138 @@ function AdminUsers() {
   }
 
   return (
-    <div className="admin-container">
-      <div className="admin-box">
-        <div className="admin-header">
-          <h2>Gestión de Usuarios</h2>
+    <div className="admin__container">
+      <div className="admin__box">
+        <div className="admin__header">
+          <h2 className="admin__title">Gestión de Usuarios</h2>
           <button 
-            className="create-user-btn"
+            className="admin__create-btn"
             onClick={() => setShowCreateForm(!showCreateForm)}
+            aria-label={showCreateForm ? 'Cancelar creación de usuario' : 'Crear nuevo usuario'}
           >
             {showCreateForm ? 'Cancelar' : 'Crear Usuario'}
           </button>
         </div>
-        {error && <p className="error-message">{error}</p>}
+        {error && <p className="admin__error">{error}</p>}
         
         {showCreateForm && (
-          <div className="create-user-form">
-            <h3>Crear Nuevo Usuario</h3>
-            <form onSubmit={handleCreateUser}>
-              <input
-                type="text"
-                placeholder="Primer Nombre"
-                value={newUser.primer_nombre}
-                onChange={(e) => setNewUser({...newUser, primer_nombre: e.target.value})}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Segundo Nombre (opcional)"
-                value={newUser.segundo_nombre}
-                onChange={(e) => setNewUser({...newUser, segundo_nombre: e.target.value})}
-              />
-              <input
-                type="text"
-                placeholder="Apellido"
-                value={newUser.apellido}
-                onChange={(e) => setNewUser({...newUser, apellido: e.target.value})}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={newUser.correo_electronico}
-                onChange={(e) => setNewUser({...newUser, correo_electronico: e.target.value})}
-                required
-              />
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={newUser.password}
-                onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                required
-              />
+          <div className="admin__form">
+            <h3 className="admin__form-title">Crear Nuevo Usuario</h3>
+            <form onSubmit={handleCreateUser} className="admin__form-content">
+              <div>
+                <label>Primer Nombre</label>
+                <input
+                  type="text"
+                  value={newUser.primer_nombre}
+                  onChange={(e) => setNewUser({...newUser, primer_nombre: e.target.value})}
+                  required
+                  className="admin__input"
+                />
+              </div>
+              <div>
+                <label>Segundo Nombre (opcional)</label>
+                <input
+                  type="text"
+                  value={newUser.segundo_nombre}
+                  onChange={(e) => setNewUser({...newUser, segundo_nombre: e.target.value})}
+                  className="admin__input"
+                />
+              </div>
+              <div>
+                <label>Apellido</label>
+                <input
+                  type="text"
+                  value={newUser.apellido}
+                  onChange={(e) => setNewUser({...newUser, apellido: e.target.value})}
+                  required
+                  className="admin__input"
+                />
+              </div>
+              <div>
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={newUser.correo_electronico}
+                  onChange={(e) => setNewUser({...newUser, correo_electronico: e.target.value})}
+                  required
+                  className="admin__input"
+                />
+              </div>
+              <div>
+                <label>Contraseña</label>
+                <div className="admin__password-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                    required
+                    className="admin__input"
+                  />
+                  <button
+                    type="button"
+                    className="admin__password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
               
-              <div className="role-selection">
+              <div className="admin__role-selection">
                 <label htmlFor="rol">Rol del Usuario:</label>
                 <select
                   id="rol"
                   value={newUser.rol}
                   onChange={(e) => setNewUser({...newUser, rol: e.target.value})}
                   required
+                  className="admin__select"
                 >
                   <option value="usuario">Usuario</option>
                   <option value="administrador">Administrador</option>
                 </select>
               </div>
               
-              <button type="submit" className="submit-btn">
+              <button 
+                type="submit" 
+                className="admin__submit-btn"
+                aria-label="Crear nuevo usuario con rol seleccionado"
+              >
                 Crear {newUser.rol === 'administrador' ? 'Administrador' : 'Usuario'}
               </button>
             </form>
           </div>
         )}
         
-        <div className="users-table">
+        {/* Mobile/Tablet: Cards Layout */}
+        <div className="admin__users-mobile">
+          {users.map((user) => (
+            <div key={user.id_usuario} className="admin__user-card">
+              <div className="admin__user-info">
+                <div className="admin__user-email">{user.correo_electronico}</div>
+                <div className="admin__user-name">{user.primer_nombre} {user.apellido}</div>
+                <div className="admin__user-meta">
+                  <span className={`admin__user-role admin__user-role--${user.rol}`}>
+                    {user.rol}
+                  </span>
+                  <span className="admin__user-date">
+                    {new Date(user.fecha_creacion).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+              <button 
+                className="admin__user-config"
+                onClick={() => handleOpenUserModal(user)}
+                aria-label={`Configurar usuario ${user.primer_nombre} ${user.apellido}`}
+              >
+                <MdSettings size={24}/>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop: Table Layout */}
+        <div className="admin__table">
           <table>
             <thead>
               <tr>
@@ -244,8 +306,9 @@ function AdminUsers() {
                   <td>{new Date(user.fecha_creacion).toLocaleDateString()}</td>
                   <td>
                     <button 
-                      className="config-btn"
+                      className="admin__config-btn"
                       onClick={() => handleOpenUserModal(user)}
+                      aria-label={`Configurar usuario ${user.primer_nombre} ${user.apellido}`}
                     >
                       <MdSettings size={20}/>
                     </button>
@@ -257,56 +320,63 @@ function AdminUsers() {
         </div>
 
         {users.length === 0 && !error && (
-          <p className="no-users">No hay usuarios registrados</p>
+          <p className="admin__no-users">No hay usuarios registrados</p>
         )}
 
         {/* Modal para editar usuario */}
         {showUserModal && selectedUser && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Configurar Usuario</h3>
+          <div className="admin__modal-overlay">
+            <div className="admin__modal-content">
+              <h3 className="admin__modal-title">Configurar Usuario</h3>
               <p><strong>Usuario:</strong> {selectedUser.primer_nombre} {selectedUser.apellido}</p>
               <p><strong>Email:</strong> {selectedUser.correo_electronico}</p>
               <p><strong>Rol actual:</strong> {selectedUser.rol}</p>
               
               {modalError && (
-                <div className="modal-error">
+                <div className="admin__modal-error">
                   {modalError}
                 </div>
               )}
               
-              <div className="modal-actions">
-                <div className="role-section">
+              <div className="admin__modal-actions">
+                <div className="admin__role-section">
                   <h4>Cambiar Rol:</h4>
                   <button 
-                    className={`role-btn ${selectedUser.rol === 'usuario' ? 'active' : ''}`}
+                    className={`admin__role-btn ${selectedUser.rol === 'usuario' ? 'active' : ''}`}
                     onClick={() => handleUpdateUserRole('usuario')}
                     disabled={selectedUser.rol === 'usuario'}
+                    aria-label="Cambiar rol a usuario"
                   >
                     Usuario
                   </button>
                   <button 
-                    className={`role-btn ${selectedUser.rol === 'administrador' ? 'active' : ''}`}
+                    className={`admin__role-btn ${selectedUser.rol === 'administrador' ? 'active' : ''}`}
                     onClick={() => handleUpdateUserRole('administrador')}
                     disabled={selectedUser.rol === 'administrador'}
+                    aria-label="Cambiar rol a administrador"
                   >
                     Administrador
                   </button>
                 </div>
                 
-                <div className="danger-section">
+                <div className="admin__danger-section">
                   <h4>Zona de Peligro:</h4>
                   <button 
-                    className="delete-user-btn"
+                    className="admin__delete-btn"
                     onClick={() => handleDeleteUser(selectedUser.id_usuario, selectedUser.correo_electronico)}
+                    aria-label={`Eliminar usuario ${selectedUser.primer_nombre} ${selectedUser.apellido}`}
                   >
                     <MdDelete size={16}/> Eliminar Usuario
                   </button>
                 </div>
               </div>
               
-              <div className="modal-buttons">
-                <button className="cancel-btn" onClick={handleCloseUserModal}>
+              <div className="admin__modal-buttons">
+                <button 
+                  className="admin__cancel-btn" 
+                  onClick={handleCloseUserModal}
+                  aria-label="Cerrar modal de configuración"
+                >
                   Cerrar
                 </button>
               </div>
@@ -314,8 +384,12 @@ function AdminUsers() {
           </div>
         )}
 
-        <div className="admin-actions">
-          <button onClick={() => navigate('/login')} className="logout-btn">
+        <div className="admin__actions">
+          <button 
+            onClick={() => navigate('/login')} 
+            className="admin__logout-btn"
+            aria-label="Cerrar sesión y volver al login"
+          >
             Cerrar Sesión
           </button>
         </div>
