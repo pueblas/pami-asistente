@@ -8,7 +8,7 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-xl);
   text-align: center;
 }
 
@@ -42,9 +42,9 @@
 }
 
 .card {
-  padding: 2em;
+  padding: var(--spacing-xl);
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--text-tertiary);
 }

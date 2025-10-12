@@ -1,0 +1,152 @@
+/* ===== DESIGN TOKENS - SISTEMA DE BRANDING ===== */
+
+:root {
+  /* ===== TIPOGRAFÍA ===== */
+  --font-family-headings: "Roboto", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-family-body: "Open Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-code: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== ESPACIADO ===== */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-xxl: 3rem; /* 48px */
+
+  /* ===== BREAKPOINTS ===== */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* ===== CONTENEDORES RESPONSIVOS ===== */
+  --container-padding-mobile: var(--spacing-md);
+  --container-padding-tablet: var(--spacing-xl);
+  --container-padding-desktop: var(--spacing-xxl);
+  
+  --container-width-mobile: 95%;
+  --container-width-tablet: 80%;
+  --container-width-desktop: 20vw;
+  --container-max-width: 500px;
+
+  /* ===== BORDERS Y RADIUS ===== */
+  --border-width: 1px;
+  --border-radius-sm: 5px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 20px;
+  --border-radius-full: 50%;
+
+  /* ===== SOMBRAS ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0px 0px 15px rgba(0, 0, 0, 0.3);
+
+  /* ===== TRANSICIONES ===== */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* ===== COLORES DE MARCA ===== */
+  --brand-primary: #0f1f3a;
+  --brand-primary-hover: #1a2a45;
+  --brand-primary-light: #f0f2f7;
+  --brand-secondary: #4c6286;
+  --brand-accent: #384999;
+  --brand-accent-hover: #5a6bb6;
+  --brand-tertiary: #7c6a9c;
+
+  /* ===== COLORES FUNCIONALES ===== */
+  --color-success: #76a9ab;
+  --color-success-hover: #659599;
+  --color-warning: #e47b1f;
+  --color-error: #d9534f;
+  --color-info: #4c6286;
+
+  /* ===== BACKGROUNDS ===== */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #e9ecef;
+  --bg-overlay: rgba(255, 255, 255, 0.95);
+  --bg-gradient-main: linear-gradient(
+    135deg,
+    var(--brand-primary) 0%,
+    var(--brand-secondary) 100%
+  );
+  --bg-gradient-success: linear-gradient(
+    135deg,
+    var(--color-success),
+    var(--color-success-hover)
+  );
+
+  /* ===== COLORES DE TEXTO ===== */
+  --text-primary: #333333;
+  --text-secondary: #555555;
+  --text-tertiary: #888888;
+  --text-inverse: #ffffff;
+  --text-muted: #6c757d;
+
+  /* ===== BORDERS ===== */
+  --border-color: #cccccc;
+  --border-color-light: #e0e0e0;
+  --border-color-dark: #999999;
+
+  /* ===== COMPONENTES ESPECÍFICOS ===== */
+
+  /* Top Bar */
+  --topbar-bg: var(--brand-primary);
+  --topbar-text: var(--text-inverse);
+  --topbar-height: 3rem;
+
+  /* Chat */
+  --chat-user-bg: var(--brand-secondary);
+  --chat-user-text: var(--text-inverse);
+  --chat-bot-bg: var(--bg-secondary);
+  --chat-bot-text: var(--text-primary);
+  --chat-container-bg: var(--bg-primary);
+  --chat-container-height: 80vh;
+  --chat-container-width: 58%;
+  --chat-container-max-width: 900px;
+
+  /* Dropdown */
+  --dropdown-bg: var(--bg-primary);
+  --dropdown-hover: var(--bg-secondary);
+  --dropdown-border: var(--border-color);
+  --dropdown-text: var(--text-primary);
+  --dropdown-min-width: 150px;
+
+  /* Botones */
+  --button-primary-bg: var(--brand-accent);
+  --button-primary-hover: var(--brand-accent-hover);
+  --button-primary-text: var(--text-inverse);
+  --button-secondary-bg: transparent;
+  --button-secondary-border: var(--brand-accent);
+  --button-secondary-text: var(--brand-accent);
+  --button-secondary-hover: var(--brand-accent-hover);
+
+  /* Inputs */
+  --input-bg: var(--bg-primary);
+  --input-border: var(--border-color);
+  --input-border-focus: var(--text-primary);
+  --input-text: var(--text-primary);
+  --input-placeholder: var(--text-tertiary);
+
+  /* Estados de feedback */
+  --feedback-like-color: var(--color-success);
+  --feedback-dislike-color: var(--color-error);
+  --feedback-neutral-color: var(--text-secondary);
+}

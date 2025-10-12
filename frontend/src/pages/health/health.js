@@ -19,11 +19,11 @@ function Health() {
       
       if (data.status === 'healthy') {
         setBackendStatus('✅ Conectado');
-        setBackendClass('success');
+        setBackendClass('health__status--success');
       }
     } catch (error) {
       setBackendStatus('❌ Sin conexión');
-      setBackendClass('error');
+      setBackendClass('health__status--error');
     }
   };
 
@@ -51,38 +51,38 @@ function Health() {
   };
 
   return (
-    <div className="App">
-      <div className="container">
-        <h1>🤖 PAMI Asistente</h1>
-        <p className="subtitle">Frontend React - Checkpoint 1</p>
+    <div className="health__container">
+      <div className="health__card">
+        <h1 className="health__title">🤖 PAMI Asistente</h1>
+        <p className="health__subtitle">Frontend React - Checkpoint 1</p>
         
-        <div className="status-card">
-          <h2>Estado de Servicios</h2>
-          <div className="service">
+        <div className="health__status-card">
+          <h2 className="health__status-title">Estado de Servicios</h2>
+          <div className="health__service">
             <span>Frontend:</span>
-            <span className="status">✅ Activo</span>
+            <span className="health__status health__status--success">✅ Activo</span>
           </div>
-          <div className="service">
+          <div className="health__service">
             <span>Backend:</span>
-            <span className={`status ${backendClass}`}>{backendStatus}</span>
+            <span className={`health__status ${backendClass}`}>{backendStatus}</span>
           </div>
         </div>
         
-        <button onClick={testConnection} disabled={loading}>
+        <button className="health__test-button" onClick={testConnection} disabled={loading}>
           {loading ? 'Conectando...' : 'Probar Conexión con Backend'}
         </button>
         
         {response && (
-          <div className="response-box">
+          <div className="health__response-box">
             {response.success ? (
               <>
-                <h3>✅ Respuesta del Backend:</h3>
-                <pre>{JSON.stringify(response.data, null, 2)}</pre>
-                <p className="timestamp">Hora: {response.timestamp}</p>
+                <h3 className="health__response-title">✅ Respuesta del Backend:</h3>
+                <pre className="health__response-code">{JSON.stringify(response.data, null, 2)}</pre>
+                <p className="health__timestamp">Hora: {response.timestamp}</p>
               </>
             ) : (
               <>
-                <h3>❌ Error:</h3>
+                <h3 className="health__response-title">❌ Error:</h3>
                 <p>{response.error}</p>
               </>
             )}
