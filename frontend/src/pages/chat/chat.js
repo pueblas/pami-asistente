@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import "./chat.css";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../components/TopBar";
-import { enviarConsulta, limpiarContexto } from "../../api/auth";
+import { enviarConsulta } from "../../api/auth";
 import {
   FaThumbsUp,
   FaThumbsDown,
-  FaSearch,
   FaMicrophone,
 } from "react-icons/fa";
 
@@ -122,12 +121,14 @@ function Chat() {
                     <button
                       className="chat__thumb-btn"
                       onClick={() => enviarFeedback("up")}
+                      aria-label="Calificar respuesta como útil"
                     >
                       <FaThumbsUp />
                     </button>
                     <button
                       className="chat__thumb-btn"
                       onClick={() => enviarFeedback("down")}
+                      aria-label="Calificar respuesta como no útil"
                     >
                       <FaThumbsDown />
                     </button>
@@ -150,10 +151,18 @@ function Chat() {
                 placeholder="Pregunta de PAMI"
                 disabled={isLoading}
               />
-              <button onClick={sendAudio} disabled={isLoading}>
+              <button 
+                onClick={sendAudio} 
+                disabled={isLoading}
+                aria-label="Enviar mensaje de audio"
+              >
                 <FaMicrophone />
               </button>
-              <button onClick={sendMessage} disabled={isLoading}>
+              <button 
+                onClick={sendMessage} 
+                disabled={isLoading}
+                aria-label="Enviar mensaje"
+              >
                 Enviar
               </button>
             </div>

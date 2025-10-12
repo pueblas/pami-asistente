@@ -104,12 +104,17 @@ function Register() {
                 type="button"
                 className="register__password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
-          <button className="register__submit-button" type="submit">
+          <button 
+            className="register__submit-button" 
+            type="submit"
+            aria-label="Crear nueva cuenta"
+          >
             Crear cuenta
           </button>
           <div className="register__login-link">
@@ -118,6 +123,7 @@ function Register() {
               className="register__login-button"
               type="button"
               onClick={() => navigate("/login")}
+              aria-label="Ir a página de inicio de sesión"
             >
               Iniciar sesión
             </button>

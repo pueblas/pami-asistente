@@ -63,11 +63,18 @@ function Login() {
               type="button"
               className="login__password-toggle"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          <button className="login__submit-button" type="submit">Entrar</button>
+          <button 
+            className="login__submit-button" 
+            type="submit"
+            aria-label="Iniciar sesión"
+          >
+            Entrar
+          </button>
           <div className="login__recover">
             <Link
               to="/recover"
@@ -79,7 +86,13 @@ function Login() {
         </form>
         <div className="login__register-link">
           ¿No tenés cuenta?{" "}
-          <button className="login__register-button" onClick={() => navigate("/register")}>Registrate</button>
+          <button 
+            className="login__register-button" 
+            onClick={() => navigate("/register")}
+            aria-label="Ir a página de registro"
+          >
+            Registrate
+          </button>
         </div>
       </div>
     </div>

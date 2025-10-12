@@ -68,7 +68,12 @@ function Health() {
           </div>
         </div>
         
-        <button className="health__test-button" onClick={testConnection} disabled={loading}>
+        <button 
+          className="health__test-button" 
+          onClick={testConnection} 
+          disabled={loading}
+          aria-label="Probar conexión con el servidor backend"
+        >
           {loading ? 'Conectando...' : 'Probar Conexión con Backend'}
         </button>
         
