@@ -29,6 +29,13 @@
   gap: var(--spacing-md);
 }
 
+.admin__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
 .admin__title {
   color: var(--text-primary);
   margin: 0;
@@ -47,6 +54,30 @@
   border: var(--border-width) solid var(--color-error);
 }
 
+.admin__chat-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--brand-secondary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  font-family: var(--font-family-body);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  height: auto;
+  min-height: 48px;
+}
+
+.admin__chat-btn:hover {
+  background: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
 .admin__create-btn {
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--button-primary-bg);
@@ -59,6 +90,11 @@
   transition: var(--transition-normal);
   font-family: var(--font-family-body);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 48px;
 }
 
 .admin__create-btn:hover {
@@ -257,20 +293,21 @@
 }
 
 .admin__user-role--usuario {
-  background: rgba(118, 169, 171, 0.1);
-  color: var(--color-success);
-  border: var(--border-width) solid var(--color-success);
+  background: #2d5a31;
+  color: #ffffff;
+  border: var(--border-width) solid #2d5a31;
 }
 
 .admin__user-role--administrador {
-  background: rgba(56, 73, 153, 0.1);
-  color: var(--brand-accent);
-  border: var(--border-width) solid var(--brand-accent);
+  background: #1e2a4a;
+  color: #ffffff;
+  border: var(--border-width) solid #1e2a4a;
 }
 
 .admin__user-date {
   font-size: var(--font-size-xs);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 .admin__user-config {
@@ -565,9 +602,16 @@
     text-align: center;
   }
 
+  .admin__header-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .admin__chat-btn,
   .admin__create-btn {
     width: 100%;
     text-align: center;
+    justify-content: center;
   }
 
   .admin__form {
@@ -677,6 +721,11 @@
     align-items: center;
   }
 
+  .admin__header-actions {
+    flex-direction: row;
+  }
+
+  .admin__chat-btn,
   .admin__create-btn {
     width: auto;
   }

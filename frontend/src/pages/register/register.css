@@ -147,6 +147,24 @@
   transform: translateY(-50%) scale(0.95);
 }
 
+.register__error {
+  background-color: rgba(217, 83, 79, 0.1);
+  border: var(--border-width) solid var(--color-error);
+  color: var(--color-error);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+.register__help-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-xs);
+  line-height: 1.4;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Mobile pequeño: hasta 480px */

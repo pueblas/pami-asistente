@@ -108,7 +108,7 @@ function Chat() {
     const validarAcceso = () => {
       const token = localStorage.getItem("access_token");
       const role = localStorage.getItem("role");
-      if (!token || role !== "usuario") {
+      if (!token || (role !== "usuario" && role !== "administrador")) {
         navigate("/login");
       } else {
         setIsLoading(false);

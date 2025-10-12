@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdDelete, MdSettings } from 'react-icons/md';
+import { MdDelete, MdSettings, MdChat } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchUsers, deleteUser, createAdminUser, updateUserRole } from '../../api/auth';
 import './adminUsers.css';
@@ -157,13 +157,23 @@ function AdminUsers() {
       <div className="admin__box">
         <div className="admin__header">
           <h2 className="admin__title">Gestión de Usuarios</h2>
-          <button 
-            className="admin__create-btn"
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            aria-label={showCreateForm ? 'Cancelar creación de usuario' : 'Crear nuevo usuario'}
-          >
-            {showCreateForm ? 'Cancelar' : 'Crear Usuario'}
-          </button>
+          <div className="admin__header-actions">
+            <button 
+              className="admin__chat-btn"
+              onClick={() => navigate('/chat')}
+              aria-label="Ir al chat como administrador"
+            >
+              <MdChat size={20} />
+              Chat
+            </button>
+            <button 
+              className="admin__create-btn"
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              aria-label={showCreateForm ? 'Cancelar creación de usuario' : 'Crear nuevo usuario'}
+            >
+              {showCreateForm ? 'Cancelar' : 'Crear Usuario'}
+            </button>
+          </div>
         </div>
         {error && <p className="admin__error">{error}</p>}
         
