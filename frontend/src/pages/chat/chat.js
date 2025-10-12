@@ -3,11 +3,7 @@ import "./chat.css";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../components/TopBar";
 import { enviarConsulta } from "../../api/auth";
-import {
-  FaThumbsUp,
-  FaThumbsDown,
-  FaMicrophone,
-} from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown, FaMicrophone } from "react-icons/fa";
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -15,6 +11,22 @@ function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+
+  const loadingMessages = [
+    "Entiendo tu consulta, estoy buscando la mejor respuesta",
+    "Revisando toda la información de PAMI para ayudarte",
+    "Tomándome el tiempo necesario para darte una respuesta completa",
+    "Analizando tu situación paso a paso",
+    "Consultando la base de datos para resolver tu duda",
+    "Estoy aca para ayudarte, buscando la información exacta",
+    "Verificando todos los detalles para darte la respuesta correcta",
+    "Revisando los requisitos específicos para tu consulta",
+    "Procesando tu consulta con cuidado y atención",
+    "Buscando la información más actualizada",
+    "Revisando las normativas vigentes de PAMI",
+    "Analizando las mejores opciones para tu caso",
+  ];
 
   const sendMessage = async () => {
     if (newMessage.trim() && !isLoading) {
@@ -28,6 +40,14 @@ function Chat() {
       setNewMessage("");
       setIsLoading(true);
 
+      // Scroll automático después de agregar mensaje del usuario
+      setTimeout(() => {
+        const chatBox = document.querySelector('.chat__box');
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }, 50);
+
       try {
         const token = localStorage.getItem("access_token");
         const response = await enviarConsulta(userMsg.text, token);
@@ -39,6 +59,14 @@ function Chat() {
         };
 
         setMessages((prev) => [...prev, botMsg]);
+        
+        // Scroll automático al final después de un breve delay
+        setTimeout(() => {
+          const chatBox = document.querySelector('.chat__box');
+          if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }
+        }, 100);
       } catch (error) {
         console.error("Error enviando consulta:", error);
 
@@ -49,6 +77,14 @@ function Chat() {
         };
 
         setMessages((prev) => [...prev, errorMsg]);
+        
+        // Scroll automático al final en caso de error también
+        setTimeout(() => {
+          const chatBox = document.querySelector('.chat__box');
+          if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+          }
+        }, 100);
       } finally {
         setIsLoading(false);
       }
@@ -80,6 +116,34 @@ function Chat() {
     };
     validarAcceso();
   }, [navigate]);
+
+  useEffect(() => {
+    let interval;
+
+    if (isLoading) {
+      // Establecer mensaje inicial aleatorio
+      const getRandomMessage = () => {
+        const randomIndex = Math.floor(Math.random() * loadingMessages.length);
+        return loadingMessages[randomIndex];
+      };
+
+      setLoadingMessage(getRandomMessage());
+
+      // Cambiar mensaje cada 2.5 segundos
+      interval = setInterval(() => {
+        setLoadingMessage(getRandomMessage());
+      }, 4500);
+    } else {
+      // Limpiar mensaje cuando no está cargando
+      setLoadingMessage("");
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isLoading, loadingMessages]);
 
   return (
     <>
@@ -139,7 +203,14 @@ function Chat() {
 
             {isLoading && (
               <div className="chat__bot-msg">
-                <div className="chat__msg-text">Escribiendo...</div>
+                <div className="chat__msg-text chat__loading-message">
+                  {loadingMessage}
+                  <span className="chat__loading-dots">
+                    <span>.</span>
+                    <span>.</span>
+                    <span>.</span>
+                  </span>
+                </div>
               </div>
             )}
 
@@ -151,15 +222,15 @@ function Chat() {
                 placeholder="Pregunta de PAMI"
                 disabled={isLoading}
               />
-              <button 
-                onClick={sendAudio} 
+              <button
+                onClick={sendAudio}
                 disabled={isLoading}
                 aria-label="Enviar mensaje de audio"
               >
                 <FaMicrophone />
               </button>
-              <button 
-                onClick={sendMessage} 
+              <button
+                onClick={sendMessage}
                 disabled={isLoading}
                 aria-label="Enviar mensaje"
               >
