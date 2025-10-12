@@ -38,7 +38,9 @@ function Login() {
 
   return (
     <div className="login__container">
-      <div className="login__box">
+      <div className="login__background"></div>
+      <div className="login__content">
+        <div className="login__box">
         <h2 className="login__title">Iniciar sesión</h2>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form className="login__form" onSubmit={handleSubmit}>
@@ -93,6 +95,7 @@ function Login() {
           >
             Registrate
           </button>
+        </div>
         </div>
       </div>
     </div>
