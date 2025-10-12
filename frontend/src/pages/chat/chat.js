@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import "./chat.css";
-import { useNavigate } from 'react-router-dom';
-import TopBar from '../../components/TopBar';
-import { enviarConsulta, limpiarContexto } from '../../api/auth';
-
+import { useNavigate } from "react-router-dom";
+import TopBar from "../../components/TopBar";
+import { enviarConsulta, limpiarContexto } from "../../api/auth";
+import {
+  FaThumbsUp,
+  FaThumbsDown,
+  FaSearch,
+  FaMicrophone,
+} from "react-icons/fa";
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -33,17 +38,17 @@ function Chat() {
           text: response.respuesta,
           timestamp: new Date(),
         };
-        
+
         setMessages((prev) => [...prev, botMsg]);
       } catch (error) {
         console.error("Error enviando consulta:", error);
-        
+
         const errorMsg = {
           author: "bot",
           text: "Lo siento, hubo un error al procesar tu consulta. Por favor, intentá nuevamente.",
           timestamp: new Date(),
         };
-        
+
         setMessages((prev) => [...prev, errorMsg]);
       } finally {
         setIsLoading(false);
@@ -66,10 +71,10 @@ function Chat() {
 
   useEffect(() => {
     const validarAcceso = () => {
-      const token = localStorage.getItem('access_token');
-      const role = localStorage.getItem('role');
-      if (!token || role !== 'usuario') {
-        navigate('/login');
+      const token = localStorage.getItem("access_token");
+      const role = localStorage.getItem("role");
+      if (!token || role !== "usuario") {
+        navigate("/login");
       } else {
         setIsLoading(false);
       }
@@ -83,34 +88,48 @@ function Chat() {
         menuAbierto={menuAbierto}
         onUserClick={() => setMenuAbierto(!menuAbierto)}
       />
-      <div className="chat-wrapper">
-        <div className="chat-container">
-          <div className="chat-box">
+      <div className="chat__wrapper">
+        <div className="chat__container">
+          <div className="chat__box">
+            {messages.length === 0 && !isLoading && (
+              <div className="chat__welcome-message">
+                <div className="chat__welcome-content">
+                  <h3>¡Bienvenido a Trámite Facíl!</h3>
+                  <p>
+                    Escribí tu consulta sobre trámites de PAMI y te ayudaré a
+                    resolverla de la mejor manera.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={msg.author === "user" ? "user-msg" : "bot-msg"}
+                className={
+                  msg.author === "user" ? "chat__user-msg" : "chat__bot-msg"
+                }
               >
-                <div className="msg-text">{msg.text}</div>
-                <div className="msg-time">
+                <div className="chat__msg-text">{msg.text}</div>
+                <div className="chat__msg-time">
                   {msg.timestamp.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </div>
                 {msg.author === "bot" && (
-                  <div className="feedback-buttons">
+                  <div className="chat__feedback-buttons">
                     <button
-                      className="thumb-btn"
+                      className="chat__thumb-btn"
                       onClick={() => enviarFeedback("up")}
                     >
-                      👍
+                      <FaThumbsUp />
                     </button>
                     <button
-                      className="thumb-btn"
+                      className="chat__thumb-btn"
                       onClick={() => enviarFeedback("down")}
                     >
-                      👎
+                      <FaThumbsDown />
                     </button>
                   </div>
                 )}
@@ -118,21 +137,21 @@ function Chat() {
             ))}
 
             {isLoading && (
-              <div className="bot-msg">
-                <div className="msg-text">Escribiendo...</div>
+              <div className="chat__bot-msg">
+                <div className="chat__msg-text">Escribiendo...</div>
               </div>
             )}
 
-            <div className="chat-input">
+            <div className="chat__input">
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="🔍 Pregunta de PAMI"
+                placeholder="Pregunta de PAMI"
                 disabled={isLoading}
               />
               <button onClick={sendAudio} disabled={isLoading}>
-                <i className="fa-solid fa-microphone"></i>
+                <FaMicrophone />
               </button>
               <button onClick={sendMessage} disabled={isLoading}>
                 Enviar

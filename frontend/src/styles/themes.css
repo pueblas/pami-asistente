@@ -8,12 +8,12 @@
   --font-family-code: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 
-  --font-size-xs: 0.75rem; /* 12px */
-  --font-size-sm: 0.875rem; /* 14px */
-  --font-size-base: 1rem; /* 16px */
-  --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem; /* 20px */
-  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 1rem;
+  --font-size-base: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -38,7 +38,7 @@
   --container-padding-mobile: var(--spacing-md);
   --container-padding-tablet: var(--spacing-xl);
   --container-padding-desktop: var(--spacing-xxl);
-  
+
   --container-width-mobile: 95%;
   --container-width-tablet: 80%;
   --container-width-desktop: 20vw;

@@ -1,9 +1,10 @@
 /* Importar design tokens */
-@import './styles/themes.css';
+@import "./styles/themes.css";
 
 body {
   margin: 0;
   font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
   color: var(--text-primary);
   background-color: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
@@ -15,7 +16,12 @@ code {
 }
 
 /* Headings y títulos usan Roboto */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .heading,
 .title {
   font-family: var(--font-family-headings);

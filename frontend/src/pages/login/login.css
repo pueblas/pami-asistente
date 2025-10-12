@@ -51,13 +51,13 @@
 
 .login__submit-button {
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-md);
   background: var(--button-primary-bg);
   color: var(--button-primary-text);
   border: none;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: var(--transition-normal);
 }
@@ -158,45 +158,45 @@
   .login__container {
     padding: var(--spacing-sm);
   }
-  
+
   .login__box {
     width: 98%;
     padding: var(--spacing-md);
     margin: var(--spacing-sm);
   }
-  
+
   .login__title {
     font-size: var(--font-size-xl);
     margin-bottom: var(--spacing-md);
   }
-  
+
   .login__input {
     padding: var(--spacing-md);
     font-size: var(--font-size-sm);
     margin-bottom: var(--spacing-md);
   }
-  
+
   .login__password-input {
     padding: var(--spacing-md);
     padding-right: 3.5rem;
     font-size: var(--font-size-sm);
   }
-  
+
   .login__submit-button {
     padding: var(--spacing-md);
     font-size: var(--font-size-base);
   }
-  
+
   .login__password-toggle {
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1.2rem;
   }
-  
+
   .login__register-link {
     margin-top: var(--spacing-md);
   }
-  
+
   .login__recover {
     padding-top: var(--spacing-sm);
   }
@@ -208,11 +208,11 @@
     width: var(--container-width-tablet);
     padding: var(--container-padding-tablet);
   }
-  
+
   .login__title {
     margin-bottom: var(--spacing-lg);
   }
-  
+
   .login__input {
     margin-bottom: var(--spacing-xl);
   }
@@ -225,21 +225,21 @@
     padding: var(--container-padding-desktop);
     min-width: 400px;
   }
-  
+
   .login__title {
     margin-bottom: var(--spacing-xl);
     font-size: var(--font-size-2xl);
   }
-  
+
   .login__submit-button {
     padding: var(--spacing-md);
     font-size: var(--font-size-lg);
   }
-  
+
   .login__register-link {
     margin-top: var(--spacing-xl);
   }
-  
+
   .login__recover {
     padding-top: var(--spacing-md);
   }
@@ -250,7 +250,7 @@
   .login__container {
     padding: var(--spacing-lg);
   }
-  
+
   .login__box {
     min-width: 450px;
   }
