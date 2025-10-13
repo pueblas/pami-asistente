@@ -3,7 +3,7 @@
   justify-content: flex-end;
   align-items: center;
   height: 3em;
-  padding: 0,5em 1em;
+  padding: 0.5em 1em;
   background-color: #5a5a5a;
   position: fixed;
   top: 0;
@@ -149,7 +149,26 @@
   font-size: 1.1rem;
 }
 
+.login-button {
+  user-select: none;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: #d9534f;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  gap: 8px;
+  width: 100%;
+  font-size: 1.1rem;
+}
+
 .logout-button:hover {
+  background-color: #f2f2f2;
+  border-radius: 4px;
+}
+
+.login-button:hover {
   background-color: #f2f2f2;
   border-radius: 4px;
 }
@@ -157,3 +176,9 @@
 .logout-icon {
   font-size: 18px;
 }
+
+.login-icon {
+  font-size: 18px;
+}
+
+
