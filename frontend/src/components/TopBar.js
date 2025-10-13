@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import { FiLogOut } from 'react-icons/fi';
+import { FiLogOut, FiLogIn } from 'react-icons/fi';
 import './TopBar.css';
 import { limpiarContexto } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
@@ -19,13 +19,19 @@ const TopBar = ({ menuAbierto, onUserClick}) => {
     localStorage.removeItem("role");
     navigate('/login');
   };
+
+  const logSesion = async () => {
+    navigate('/login');
+  };
+  
   const [userRole, setUserRole] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const navigate = useNavigate();
+  const isAuthenticated = userRole === 'administrador' || userRole === 'usuario';
 
   useEffect(() => {
-    const validarAcceso = () => {
+    const guardarDatos = () => {
       const token = localStorage.getItem('access_token');
       const role = localStorage.getItem('role');
 
@@ -46,7 +52,7 @@ const TopBar = ({ menuAbierto, onUserClick}) => {
       }
     };
 
-    validarAcceso();
+    guardarDatos();
   }, []);
 
   return (
@@ -60,24 +66,35 @@ const TopBar = ({ menuAbierto, onUserClick}) => {
         </button>
       </div>
 
-      {menuAbierto && (
+      {menuAbierto &&(
         <div className="dropdown-menu">
-          <div className="account-section">
-            <h4 className="account-title">Cuenta</h4>
-            <div className="account-info">
-              <FaUserCircle className="account-icon" />
-              <div className="account-text">
-                <span className="account-name">{userName}</span>
-                <span className="account-email">{userEmail}</span>
+          { isAuthenticated ? (
+            <section>
+              <div className="account-section">
+                <h4 className="account-title">Cuenta</h4>
+                <div className="account-info">
+                  <FaUserCircle className="account-icon" />
+                  <div className="account-text">
+                    <span className="account-name">{userName}</span>
+                    <span className="account-email">{userEmail}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <ul>
-            <li className="logout-button" onClick={closeSesion}>
-              <FiLogOut className="logout-icon" />
-              <span className="logout-text">Cerrar sesión</span>
-            </li>
-          </ul>
+              <ul>
+                <li className="logout-button" onClick={closeSesion}>
+                  <FiLogOut className="logout-icon" />
+                  <span className="logout-text">Cerrar sesión</span>
+                </li>
+              </ul>
+            </section>
+          ) : (
+            <section>
+              <li className="login-button" onClick={logSesion}>
+                <FiLogIn className="login-icon" />
+                <span className="logout-text">Iniciar sesión</span>
+              </li>
+            </section>
+          )}
         </div>
       )}
     </header>
