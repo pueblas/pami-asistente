@@ -4,6 +4,7 @@ import { FiLogOut, FiLogIn } from 'react-icons/fi';
 import './TopBar.css';
 import { limpiarContexto } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
+import logo from '../logo/tramiteFacilLogo.png';
 
 const TopBar = ({ menuAbierto, onUserClick}) => {
   const closeSesion = async () => {
@@ -57,6 +58,9 @@ const TopBar = ({ menuAbierto, onUserClick}) => {
 
   return (
     <header className="top-bar">
+      <div className="logo-container">
+        <img src={logo} alt="Trámite Fácil" className="logo-image" />
+      </div>
       <div className="user-menu-container">
         {userRole === "administrador" && (
           <span className="user-role">{userRole}</span>
