@@ -15,6 +15,7 @@
 }
 
 .logo-container {
+  user-select: none;
   display: flex;
   align-items: center;
   padding-left: 5px;
