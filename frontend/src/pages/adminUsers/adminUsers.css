@@ -1,12 +1,13 @@
 .admin__container {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - calc(var(--topbar-height) * 2));
   justify-content: center;
   align-items: flex-start;
   background: var(--bg-gradient-main);
   background-size: cover;
   width: 100vw;
   padding: var(--spacing-lg);
+  padding-top: calc(calc(var(--topbar-height) * 2) + var(--spacing-lg));
   box-sizing: border-box;
 }
 
@@ -583,6 +584,7 @@
 @media (max-width: 480px) {
   .admin__container {
     padding: var(--spacing-sm);
+    padding-top: calc(calc(var(--topbar-height) * 1.6) + var(--spacing-sm));
     align-items: flex-start;
   }
 
@@ -684,6 +686,7 @@
 @media (min-width: 768px) {
   .admin__container {
     padding: var(--spacing-lg);
+    padding-top: calc(calc(var(--topbar-height) * 1.8) + var(--spacing-lg));
   }
 
   .admin__box {
@@ -714,6 +717,7 @@
 @media (min-width: 1024px) {
   .admin__container {
     padding: var(--spacing-xl);
+    padding-top: calc(calc(var(--topbar-height) * 2) + var(--spacing-xl));
   }
 
   .admin__header {
@@ -763,6 +767,7 @@
 @media (min-width: 1280px) {
   .admin__container {
     padding: var(--spacing-xxl);
+    padding-top: calc(calc(var(--topbar-height) * 2) + var(--spacing-xxl));
   }
 
   .admin__box {

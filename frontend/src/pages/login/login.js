@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUsuario } from "../../api/auth";
+import TopBar from "../../components/TopBar";
 import "./login.css";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -37,7 +38,9 @@ function Login() {
   };
 
   return (
-    <div className="login__container">
+    <>
+      <TopBar showUserMenu={false} />
+      <div className="login__container">
       <div className="login__background"></div>
       <div className="login__content">
         <div className="login__box">
@@ -99,6 +102,7 @@ function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

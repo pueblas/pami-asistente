@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TopBar from "../../components/TopBar";
 import "./register.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -46,7 +47,9 @@ function Register() {
   };
 
   return (
-    <div className="register__container">
+    <>
+      <TopBar showUserMenu={false} />
+      <div className="register__container" id="main-content">
       <div className="register__box">
         <h2 className="register__title">Registrarse</h2>
         {error && (
@@ -176,6 +179,7 @@ function Register() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

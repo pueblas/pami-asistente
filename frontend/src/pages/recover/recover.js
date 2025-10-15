@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import TopBar from '../../components/TopBar';
 import './recover.css';
 
 // Definir la URL de la API directamente o usar variable de entorno
@@ -69,7 +70,9 @@ function Recover() {
   };
 
   return (
-    <div className="recover__container">
+    <>
+      <TopBar showUserMenu={false} />
+      <div className="recover__container" id="main-content">
       <div className="recover__box">
         <h2 className="recover__title">Recuperar Contraseña</h2>
         <p className="recover__subtitle">
@@ -119,6 +122,7 @@ function Recover() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

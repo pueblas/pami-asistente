@@ -6,6 +6,11 @@
   align-items: center;
   background: var(--bg-gradient-main);
   background-size: cover;
+  padding-top: var(--topbar-height);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  padding-bottom: 0;
+  box-sizing: border-box;
   /*
   background: url('https://www.transparenttextures.com/patterns/diagmonds.png') repeat;
   background-color: #4ae284cc; /* color azul semi-transparente */
@@ -18,7 +23,6 @@
   box-shadow: var(--shadow-lg);
   width: var(--container-width-mobile);
   max-width: var(--container-max-width);
-  min-height: auto;
 }
 
 .register__title {
@@ -170,11 +174,14 @@
 /* Mobile pequeño: hasta 480px */
 @media (max-width: 480px) {
   .register__container {
-    padding: var(--spacing-sm);
+    padding-top: var(--topbar-height);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-bottom: 0;
   }
 
   .register__box {
-    width: 98%;
+    width: 80%;
     padding: var(--spacing-md);
     margin: var(--spacing-sm);
   }
@@ -211,6 +218,11 @@
 
 /* Tablet: 768px y superiores */
 @media (min-width: 768px) {
+  .register__container {
+    padding-top: var(--topbar-height);
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+  }
   .register__box {
     width: var(--container-width-tablet);
     padding: var(--container-padding-tablet);
@@ -231,26 +243,44 @@
 
 /* Desktop: 1024px y superiores */
 @media (min-width: 1024px) {
+  .register__container {
+    padding-top: calc(var(--topbar-height) * 2);
+    padding-left: var(--spacing-xxl);
+    padding-right: var(--spacing-xxl);
+  }
+  
   .register__box {
-    width: var(--container-width-desktop);
-    padding: var(--container-padding-desktop);
-    min-width: 400px;
-  }
-
-  .register__form {
-    gap: var(--spacing-md);
-  }
-
-  .register__form > div {
-    margin-bottom: var(--spacing-xl);
+    width: 80%;
+    max-width: 700px;
+    padding: var(--spacing-xxl);
+    min-width: 600px;
   }
 
   .register__title {
-    margin-bottom: var(--spacing-xl);
     font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-xl);
   }
 
+  .register__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .register__form > div {
+    margin-bottom: 0;
+  }
+
+  /* Make password, submit button and login link span full width */
+  .register__form > div:nth-child(5),
+  .register__submit-button,
+  .register__login-link {
+    grid-column: 1 / -1;
+  }
+
+  /* Submit button styling */
   .register__submit-button {
+    margin-top: var(--spacing-lg);
     padding: var(--spacing-md);
     font-size: var(--font-size-lg);
   }
@@ -259,11 +289,17 @@
 /* Desktop large: 1280px y superiores */
 @media (min-width: 1280px) {
   .register__container {
-    padding: var(--spacing-lg);
+    padding-left: var(--spacing-xxl);
+    padding-right: var(--spacing-xxl);
   }
 
   .register__box {
-    min-width: 450px;
+    max-width: 800px;
+    min-width: 700px;
+  }
+
+  .register__form {
+    gap: var(--spacing-xl) var(--spacing-xxl);
   }
 }
 

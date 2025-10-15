@@ -4,7 +4,11 @@
   width: 100vw;
   position: relative;
   margin: 0;
-  padding: 0;
+  padding-top: var(--topbar-height);
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  box-sizing: border-box;
 }
 
 .login__background {
@@ -17,8 +21,11 @@
   align-items: center;
   width: 100%;
   height: 100%;
+  flex: 1;
   background: var(--bg-gradient-main);
   background-size: cover;
+  padding: var(--spacing-lg);
+  box-sizing: border-box;
 }
 
 .login__box {
@@ -168,14 +175,19 @@
 
 /* Mobile pequeño: hasta 480px */
 @media (max-width: 480px) {
+  .login__container {
+    padding-top: var(--topbar-height);
+  }
+
   .login__content {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
   }
 
   .login__box {
-    width: 98%;
-    padding: var(--spacing-md);
+    width: 95%;
+    padding: var(--spacing-lg);
     margin: var(--spacing-sm);
+    max-width: none;
   }
 
   .login__title {
@@ -217,6 +229,14 @@
 
 /* Tablet: 768px y superiores */
 @media (min-width: 768px) {
+  .login__container {
+    padding-top: var(--topbar-height);
+  }
+
+  .login__content {
+    padding: var(--spacing-xl);
+  }
+
   .login__box {
     width: var(--container-width-tablet);
     padding: var(--container-padding-tablet);
@@ -236,19 +256,20 @@
   .login__container {
     flex-direction: row;
     margin: 0;
-    padding: 0;
+    padding-top: var(--topbar-height);
   }
 
   .login__content {
     width: 50%;
-    height: 100vh;
+    height: 100%;
     order: 1;
+    padding: var(--spacing-xxl);
   }
 
   .login__background {
     display: block;
     width: 50%;
-    height: 100vh;
+    height: 100%;
     background-image: url("https://images.unsplash.com/photo-1758686254007-a1aec378eca3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1632");
     background-size: cover;
     background-position: center;

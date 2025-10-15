@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete, MdSettings, MdChat } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchUsers, deleteUser, createAdminUser, updateUserRole } from '../../api/auth';
+import TopBar from '../../components/TopBar';
 import './adminUsers.css';
 
 function AdminUsers() {
@@ -153,7 +154,9 @@ function AdminUsers() {
   }
 
   return (
-    <div className="admin__container">
+    <>
+      <TopBar showUserMenu={false} />
+      <div className="admin__container">
       <div className="admin__box">
         <div className="admin__header">
           <h2 className="admin__title">Gestión de Usuarios</h2>
@@ -405,6 +408,7 @@ function AdminUsers() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

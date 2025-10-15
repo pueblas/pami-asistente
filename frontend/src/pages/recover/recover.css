@@ -6,6 +6,11 @@
   align-items: center;
   background: var(--bg-gradient-main);
   background-size: cover;
+  padding-top: var(--topbar-height);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  padding-bottom: 0;
+  box-sizing: border-box;
 }
 
 .recover__box {
@@ -146,7 +151,10 @@
 /* Mobile pequeño: hasta 480px */
 @media (max-width: 480px) {
   .recover__container {
-    padding: var(--spacing-sm);
+    padding-top: var(--topbar-height);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-bottom: 0;
   }
 
   .recover__box {
@@ -185,6 +193,11 @@
 
 /* Tablet: 768px y superiores */
 @media (min-width: 768px) {
+  .recover__container {
+    padding-top: var(--topbar-height);
+    padding-left: var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+  }
   .recover__box {
     width: var(--container-width-tablet);
     padding: var(--container-padding-tablet);
@@ -209,6 +222,11 @@
 
 /* Desktop: 1024px y superiores */
 @media (min-width: 1024px) {
+  .recover__container {
+    padding-top: var(--topbar-height);
+    padding-left: var(--spacing-xxl);
+    padding-right: var(--spacing-xxl);
+  }
   .recover__box {
     width: var(--container-width-desktop);
     padding: var(--container-padding-desktop);
