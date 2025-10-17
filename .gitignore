@@ -26,4 +26,4 @@ node_modules/
 *.sqlite
 *.sqlite3
 database/*.db
-database/chroma/*
+database/chroma/
