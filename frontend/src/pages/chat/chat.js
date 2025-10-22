@@ -13,6 +13,9 @@ function Chat() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
 
+  const [isListening, setIsListening] = useState(false);
+
+
   const loadingMessages = [
     "Entiendo tu consulta, estoy buscando la mejor respuesta",
     "Revisando toda la información de PAMI para ayudarte",
@@ -86,7 +89,8 @@ function Chat() {
           }
         }, 100);
       } finally {
-        setIsLoading(false);
+        /*setIsLoading(false);*/
+        setTimeout(() => setIsLoading(false), 1000);
       }
     }
   };
@@ -100,8 +104,102 @@ function Chat() {
   };
 
   const sendAudio = () => {
-    // Funcionalidad de audio pendiente para futuro sprint
-    console.log("Funcionalidad de audio pendiente");
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert("Tu navegador no soporta reconocimiento de voz.");
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "es-ES";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.start();
+    setIsListening(true);
+    setIsLoading(true);
+    setLoadingMessage("🎤 Escuchando... hablá ahora");
+
+    recognition.onresult = async (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log("Texto reconocido:", transcript);
+
+      setNewMessage(transcript);
+
+      //Dejamos que sendMessageFromVoice maneje el isLoading
+      setIsListening(false);
+
+      //Esperamos a que envíe el mensaje como texto
+      await sendMessageFromVoice(transcript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Error en reconocimiento de voz:", event.error);
+      setIsListening(false);
+      setIsLoading(false);
+
+      let errorMsg = "Hubo un error con el reconocimiento de voz.";
+
+      if (event.error === "network") {
+        errorMsg = "No se pudo conectar con el servicio de reconocimiento de voz. Verificá tu conexión a Internet.";
+      } else if (event.error === "not-allowed") {
+        errorMsg = "No se permitió el acceso al micrófono. Revisá los permisos del navegador.";
+      } else if (event.error === "no-speech") {
+        errorMsg = "No se detectó voz. Intentá nuevamente.";
+      }
+
+      const errorMessage = {
+        author: "bot",
+        text: errorMsg,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+  };
+
+  const sendMessageFromVoice = async (text) => {
+    if (text.trim() && !isLoading) {
+      const userMsg = {
+        author: "user",
+        text: text.trim(),
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, userMsg]);
+      setNewMessage("");
+      setIsLoading(true);
+
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await enviarConsulta(userMsg.text, token);
+
+        const botMsg = {
+          author: "bot",
+          text: response.respuesta,
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, botMsg]);
+      } catch (error) {
+        console.error("Error enviando consulta:", error);
+
+        const errorMsg = {
+          author: "bot",
+          text: "Lo siento, hubo un error al procesar tu consulta de voz. Por favor, intentá nuevamente.",
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, errorMsg]);
+      } finally {
+        setTimeout(() => setIsLoading(false), 1000);
+      }
+    }
   };
 
   useEffect(() => {
@@ -120,7 +218,7 @@ function Chat() {
   useEffect(() => {
     let interval;
 
-    if (isLoading) {
+    if (isLoading && !isListening) {
       // Establecer mensaje inicial aleatorio
       const getRandomMessage = () => {
         const randomIndex = Math.floor(Math.random() * loadingMessages.length);
@@ -129,21 +227,18 @@ function Chat() {
 
       setLoadingMessage(getRandomMessage());
 
-      // Cambiar mensaje cada 2.5 segundos
+      // Cambiar mensaje cada 4.5 segundos
       interval = setInterval(() => {
         setLoadingMessage(getRandomMessage());
       }, 4500);
-    } else {
-      // Limpiar mensaje cuando no está cargando
+    } 
+    // NO borrar el mensaje si se esta escuchando
+    else if (!isLoading && !isListening) {
       setLoadingMessage("");
     }
 
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isLoading, loadingMessages]);
+    return () => clearInterval(interval);
+  }, [isLoading, isListening, loadingMessages]);
 
   return (
     <>
