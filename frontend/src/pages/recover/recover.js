@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import TopBar from '../../components/TopBar';
+import TopBar from '../../components/topBar';
 import './recover.css';
 
 // Definir la URL de la API directamente o usar variable de entorno

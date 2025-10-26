@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiLogOut, FiLogIn, FiSettings } from "react-icons/fi";
 import "./TopBar.css";
-import { limpiarContexto } from "../api/auth";
+import { limpiarContexto } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
-import logo from "../logo/tramiteFacilLogo.png";
+import logo from "../../logo/tramiteFacilLogo.png";
 
 const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
   const closeSesion = async () => {

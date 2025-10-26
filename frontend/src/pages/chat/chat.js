@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./chat.css";
 import { useNavigate } from "react-router-dom";
-import TopBar from "../../components/TopBar";
+import TopBar from "../../components/topBar";
 import { enviarConsulta } from "../../api/auth";
 import { FaThumbsUp, FaThumbsDown, FaMicrophone } from "react-icons/fa";
 

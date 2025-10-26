@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete, MdSettings, MdChat } from 'react-icons/md';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { fetchUsers, deleteUser, createAdminUser, updateUserRole } from '../../api/auth';
-import TopBar from '../../components/TopBar';
+import TopBar from '../../components/topBar';
 import './adminUsers.css';
 
 function AdminUsers() {
@@ -232,6 +232,7 @@ function AdminUsers() {
                     onChange={(e) => setNewUser({...newUser, password: e.target.value})}
                     required
                     className="admin__input"
+                    placeholder="Debe incluir: mayúscula, número y carácter especial"
                   />
                   <button
                     type="button"

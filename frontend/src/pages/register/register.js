@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import TopBar from "../../components/TopBar";
+import TopBar from "../../components/topBar";
 import "./register.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -140,7 +140,7 @@ function Register() {
                 aria-required="true"
                 aria-describedby="password-help"
                 autoComplete="new-password"
-                placeholder="Creá una contraseña segura"
+                placeholder="Debe incluir: mayúscula, número y carácter especial"
                 aria-invalid={error && error.includes('password') ? 'true' : 'false'}
                 minLength="8"
               />
@@ -155,7 +155,7 @@ function Register() {
               </button>
             </div>
             <div id="password-help" className="register__help-text">
-              La contraseña debe tener al menos 8 caracteres
+              Debe incluir al menos: una mayúscula, un número y un carácter especial (!@#$%^&*)
             </div>
           </div>
           <button 
