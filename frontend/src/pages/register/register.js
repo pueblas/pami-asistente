@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TopBar from "../../components/topBar";
 import "./register.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 function Register() {
   const [primerNombre, setPrimerNombre] = useState("");
@@ -11,6 +11,13 @@ function Register() {
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordValid, setPasswordValid] = useState({
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -46,23 +53,34 @@ function Register() {
     }
   };
 
+  const validatePassword = (pwd) => {
+    const length = pwd.length >= 8;
+    const lowercase = /[a-z]/.test(pwd);
+    const uppercase = /[A-Z]/.test(pwd);
+    const number = /[0-9]/.test(pwd);
+    const special = /[!@#$%^&*(),.?":{}|<>\[\]\\/\\~`'\-+=;:_]/.test(pwd);
+
+    setPasswordValid({ length, lowercase, uppercase, number, special });
+  };
+
   return (
     <>
       <TopBar showUserMenu={false} />
       <div className="register__container" id="main-content">
-      <div className="register__box">
-        <h2 className="register__title">Registrarse</h2>
-        {error && (
-          <div 
-            id="error-message" 
-            className="register__error" 
-            role="alert" 
-            aria-live="polite"
-          >
-            {error}
-          </div>
-        )}
-        <form className="register__form" onSubmit={handleRegister} noValidate>
+        <div className="register__box">
+          <h2 className="register__title">Registrarse</h2>
+          {error && (
+            <div 
+              id="error-message" 
+              className="register__error" 
+              role="alert" 
+              aria-live="polite"
+            >
+              {error}
+            </div>
+          )}
+
+          <form className="register__form" onSubmit={handleRegister} noValidate>
           <div>
             <label htmlFor="primer-nombre">Primer nombre</label>
             <input
@@ -135,7 +153,7 @@ function Register() {
                 className="register__input"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); validatePassword(e.target.value); }}
                 required
                 aria-required="true"
                 aria-describedby="password-help"
@@ -157,6 +175,23 @@ function Register() {
             <div id="password-help" className="register__help-text">
               Debe incluir al menos: una mayúscula, un número y un carácter especial (!@#$%^&*)
             </div>
+            <ul id="password-requirements" className="password-requirements" aria-live="polite">
+              <li className={passwordValid.lowercase ? 'valid' : 'invalid'}>
+                {passwordValid.lowercase ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene minúsculas</span>
+              </li>
+              <li className={passwordValid.uppercase ? 'valid' : 'invalid'}>
+                {passwordValid.uppercase ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene mayúsculas</span>
+              </li>
+              <li className={passwordValid.number ? 'valid' : 'invalid'}>
+                {passwordValid.number ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene número</span>
+              </li>
+              <li className={passwordValid.special ? 'valid' : 'invalid'}>
+                {passwordValid.special ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene carácter especial</span>
+              </li>
+              <li className={passwordValid.length ? 'valid' : 'invalid'}>
+                {passwordValid.length ? <FaCheckCircle /> : <FaTimesCircle />} <span>Al menos 8 caracteres</span>
+              </li>
+            </ul>
           </div>
           <button 
             className="register__submit-button" 
