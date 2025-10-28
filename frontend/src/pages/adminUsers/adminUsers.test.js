@@ -103,12 +103,12 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
-        expect(screen.getByText('María García')).toBeInTheDocument();
-        expect(screen.getByText('juan@test.com')).toBeInTheDocument();
-        expect(screen.getByText('maria@test.com')).toBeInTheDocument();
-        expect(screen.getByText('usuario')).toBeInTheDocument();
-        expect(screen.getByText('administrador')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2); // appears in both table and mobile view
+        expect(screen.getAllByText('María García')).toHaveLength(2);
+        expect(screen.getAllByText('juan@test.com')).toHaveLength(2);
+        expect(screen.getAllByText('maria@test.com')).toHaveLength(2);
+        expect(screen.getAllByText('usuario')).toHaveLength(2);
+        expect(screen.getAllByText('administrador')).toHaveLength(2);
       });
     });
   });
@@ -172,10 +172,11 @@ describe('AdminUsers Component', () => {
       await user.click(screen.getByText('Crear Usuario'));
       
       expect(screen.getByText('Crear Nuevo Usuario')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Primer Nombre')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Apellido')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Contraseña')).toBeInTheDocument();
+      expect(screen.getByText('Primer Nombre')).toBeInTheDocument();
+      expect(screen.getByText('Segundo Nombre (opcional)')).toBeInTheDocument();
+      expect(screen.getByText('Apellido')).toBeInTheDocument();
+      expect(screen.getAllByText('Email')).toHaveLength(2); // Form label and table header
+      expect(screen.getByText('Contraseña')).toBeInTheDocument();
       expect(screen.getByLabelText('Rol del Usuario:')).toBeInTheDocument();
       expect(screen.getByText('Cancelar')).toBeInTheDocument();
     });
@@ -192,10 +193,13 @@ describe('AdminUsers Component', () => {
       
       await user.click(screen.getByText('Crear Usuario'));
       
-      await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Carlos');
-      await user.type(screen.getByPlaceholderText('Apellido'), 'López');
-      await user.type(screen.getByPlaceholderText('Email'), 'carlos@test.com');
-      await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+      const inputs = screen.getAllByRole('textbox');
+      const passwordInput = screen.getByPlaceholderText('Debe incluir: mayúscula, número y carácter especial');
+      
+      await user.type(inputs[0], 'Carlos');  // Primer Nombre
+      await user.type(inputs[2], 'López');   // Apellido (skip segundo nombre index 1)
+      await user.type(inputs[3], 'carlos@test.com'); // Email
+      await user.type(passwordInput, 'password123');
       
       // Select administrator role
       await user.selectOptions(screen.getByLabelText('Rol del Usuario:'), 'administrador');
@@ -232,10 +236,14 @@ describe('AdminUsers Component', () => {
       });
       
       await user.click(screen.getByText('Crear Usuario'));
-      await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Carlos');
-      await user.type(screen.getByPlaceholderText('Apellido'), 'López');
-      await user.type(screen.getByPlaceholderText('Email'), 'carlos@test.com');
-      await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+      
+      const inputs = screen.getAllByRole('textbox');
+      const passwordInput = screen.getByPlaceholderText('Debe incluir: mayúscula, número y carácter especial');
+      
+      await user.type(inputs[0], 'Carlos');
+      await user.type(inputs[2], 'López');
+      await user.type(inputs[3], 'carlos@test.com');
+      await user.type(passwordInput, 'password123');
       await user.selectOptions(screen.getByLabelText('Rol del Usuario:'), 'administrador');
       await user.click(screen.getByText('Crear Administrador'));
       
@@ -256,10 +264,13 @@ describe('AdminUsers Component', () => {
       
       await user.click(screen.getByText('Crear Usuario'));
       
-      await user.type(screen.getByPlaceholderText('Primer Nombre'), 'Ana');
-      await user.type(screen.getByPlaceholderText('Apellido'), 'Silva');
-      await user.type(screen.getByPlaceholderText('Email'), 'ana@test.com');
-      await user.type(screen.getByPlaceholderText('Contraseña'), 'password123');
+      const inputs = screen.getAllByRole('textbox');
+      const passwordInput = screen.getByPlaceholderText('Debe incluir: mayúscula, número y carácter especial');
+      
+      await user.type(inputs[0], 'Ana');
+      await user.type(inputs[2], 'Silva');
+      await user.type(inputs[3], 'ana@test.com');
+      await user.type(passwordInput, 'password123');
       
       // Keep default role (usuario) and submit
       await user.click(screen.getByText('Crear Usuario'));
@@ -286,13 +297,12 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
-      // Find config button (should have settings icon)
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      // Find config button using aria-label (there are two - mobile and desktop)
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Verify modal is open
       expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
@@ -313,13 +323,12 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Verify modal is open
       expect(screen.getByText('Configurar Usuario')).toBeInTheDocument();
@@ -340,13 +349,12 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal for Juan (usuario)
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Click Administrador button
       await user.click(screen.getByText('Administrador'));
@@ -371,13 +379,12 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Try to change role
       await user.click(screen.getByText('Administrador'));
@@ -400,16 +407,15 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Click delete button in modal
-      await user.click(screen.getByText(/Eliminar Usuario/));
+      await user.click(screen.getByText('Eliminar Usuario'));
       
       expect(window.confirm).toHaveBeenCalledWith('¿Estás seguro de que querés eliminar al usuario juan@test.com?');
       
@@ -429,16 +435,15 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Click delete button in modal
-      await user.click(screen.getByText(/Eliminar Usuario/));
+      await user.click(screen.getByText('Eliminar Usuario'));
       
       expect(window.confirm).toHaveBeenCalled();
       expect(mockDeleteUser).not.toHaveBeenCalled();
@@ -461,16 +466,15 @@ describe('AdminUsers Component', () => {
       renderAdminUsers();
       
       await waitFor(() => {
-        expect(screen.getByText('Juan Pérez')).toBeInTheDocument();
+        expect(screen.getAllByText('Juan Pérez')).toHaveLength(2);
       });
       
       // Open modal
-      const configButtons = screen.getAllByRole('button');
-      const configButton = configButtons.find(btn => btn.querySelector('svg'));
-      await user.click(configButton);
+      const configButtons = screen.getAllByLabelText('Configurar usuario Juan Pérez');
+      await user.click(configButtons[0]);
       
       // Click delete button in modal
-      await user.click(screen.getByText(/Eliminar Usuario/));
+      await user.click(screen.getByText('Eliminar Usuario'));
       
       await waitFor(() => {
         expect(screen.getByText('No se puede eliminar este usuario')).toBeInTheDocument();
