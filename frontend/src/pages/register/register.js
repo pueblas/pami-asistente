@@ -26,6 +26,13 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    // Verificar que la contraseña cumpla todos los requisitos antes de enviar
+    const allValid = Object.values(passwordValid).every(Boolean);
+    if (!allValid) {
+      setError("La contraseña no cumple los requisitos mínimos");
+      return;
+    }
+
     try {
       await axios.post(
         `${API_URL}register`,
@@ -193,10 +200,11 @@ function Register() {
               </li>
             </ul>
           </div>
-          <button 
-            className="register__submit-button" 
+          <button
+            className="register__submit-button"
             type="submit"
             aria-label="Crear nueva cuenta"
+            disabled={!Object.values(passwordValid).every(Boolean)}
           >
             Crear cuenta
           </button>
