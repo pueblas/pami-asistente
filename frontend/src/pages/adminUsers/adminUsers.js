@@ -7,6 +7,7 @@ import TopBar from '../../components/topBar';
 import './adminUsers.css';
 
 function AdminUsers() {
+  const [menuAbierto, setMenuAbierto] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -155,7 +156,10 @@ function AdminUsers() {
 
   return (
     <>
-      <TopBar showUserMenu={false} />
+      <TopBar
+        menuAbierto={menuAbierto}
+        onUserClick={() => setMenuAbierto(!menuAbierto)}
+      />
       <div className="admin__container">
       <div className="admin__box">
         <div className="admin__header">

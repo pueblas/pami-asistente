@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiLogOut, FiLogIn, FiSettings } from "react-icons/fi";
+import { MdPeople, MdDescription, MdChat } from "react-icons/md";
 import "./TopBar.css";
 import { limpiarContexto } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
@@ -25,8 +26,16 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
     navigate("/login");
   };
 
-  const goToAdminCenter = () => {
+  const goToAdminUsers = () => {
     navigate("/admin-center");
+  };
+
+  const goToAdminProcedures = () => {
+    navigate("/admin-procedures");
+  };
+
+  const goToChat = () => {
+    navigate("/chat");
   };
 
   const [userRole, setUserRole] = useState("");
@@ -68,90 +77,150 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
       </a>
       <header className="top-bar" role="banner">
         <div className="logo-container">
-          <img src={logo} alt="Trámite Fácil - Logotipo de la aplicación" className="logo-image" />
+          <img
+            src={logo}
+            alt="Trámite Fácil - Logotipo de la aplicación"
+            className="logo-image"
+          />
         </div>
-      {showUserMenu && (
-        <nav className="user-menu-container" role="navigation" aria-label="Menú de usuario">
-          {userRole === "administrador" && (
-            <span className="user-role" aria-label="Rol de usuario: administrador">{userRole}</span>
-          )}
-          <button 
-            className="user-button" 
-            onClick={onUserClick}
-            aria-label={`${menuAbierto ? 'Cerrar' : 'Abrir'} menú de usuario`}
-            aria-expanded={menuAbierto}
-            aria-haspopup="true"
+        {showUserMenu && (
+          <nav
+            className="user-menu-container"
+            role="navigation"
+            aria-label="Menú de usuario"
           >
-            <FaUserCircle className="user-icon" aria-hidden="true" />
-          </button>
-        </nav>
-      )}
+            {userRole === "administrador" && (
+              <span
+                className="user-role"
+                aria-label="Rol de usuario: administrador"
+              >
+                {userRole}
+              </span>
+            )}
+            <button
+              className="user-button"
+              onClick={onUserClick}
+              aria-label={`${menuAbierto ? "Cerrar" : "Abrir"} menú de usuario`}
+              aria-expanded={menuAbierto}
+              aria-haspopup="true"
+            >
+              <FaUserCircle className="user-icon" aria-hidden="true" />
+            </button>
+          </nav>
+        )}
 
-      {showUserMenu && menuAbierto && (
-        <div 
-          className="dropdown-menu" 
-          role="menu" 
-          aria-label="Opciones de usuario"
-          id="user-dropdown-menu"
-        >
-          {isAuthenticated ? (
-            <section>
-              <div className="account-section" role="group" aria-labelledby="account-heading">
-                <h4 className="account-title" id="account-heading">Cuenta</h4>
-                <div className="account-info">
-                  <FaUserCircle className="account-icon" aria-hidden="true" />
-                  <div className="account-text">
-                    <span className="account-name" aria-label={`Nombre: ${userName}`}>{userName}</span>
-                    <span className="account-email" aria-label={`Email: ${userEmail}`}>{userEmail}</span>
+        {showUserMenu && menuAbierto && (
+          <div
+            className="dropdown-menu"
+            role="menu"
+            aria-label="Opciones de usuario"
+            id="user-dropdown-menu"
+          >
+            {isAuthenticated ? (
+              <section>
+                <div
+                  className="account-section"
+                  role="group"
+                  aria-labelledby="account-heading"
+                >
+                  <h4 className="account-title" id="account-heading">
+                    Cuenta
+                  </h4>
+                  <div className="account-info">
+                    <FaUserCircle className="account-icon" aria-hidden="true" />
+                    <div className="account-text">
+                      <span
+                        className="account-name"
+                        aria-label={`Nombre: ${userName}`}
+                      >
+                        {userName}
+                      </span>
+                      <span
+                        className="account-email"
+                        aria-label={`Email: ${userEmail}`}
+                      >
+                        {userEmail}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <ul role="none">
-                {userRole === "administrador" && (
+                <ul role="none">
+                  {userRole === "administrador" && (
+                    <>
+                      <li role="none">
+                        <button
+                          className="admin-button"
+                          onClick={goToAdminUsers}
+                          role="menuitem"
+                          aria-label="Ir a gestión de usuarios"
+                        >
+                          <MdPeople className="admin-icon" aria-hidden="true" />
+                          <span className="admin-text">
+                            Gestión de Usuarios
+                          </span>
+                        </button>
+                      </li>
+                      <li role="none">
+                        <button
+                          className="admin-button"
+                          onClick={goToAdminProcedures}
+                          role="menuitem"
+                          aria-label="Ir a gestión de procedimientos"
+                        >
+                          <MdDescription
+                            className="admin-icon"
+                            aria-hidden="true"
+                          />
+                          <span className="admin-text">
+                            Gestión de Tramites
+                          </span>
+                        </button>
+                      </li>
+                      <li role="none">
+                        <button
+                          className="admin-button"
+                          onClick={goToChat}
+                          role="menuitem"
+                          aria-label="Ir al chat como administrador"
+                        >
+                          <MdChat className="admin-icon" aria-hidden="true" />
+                          <span className="admin-text">Chat</span>
+                        </button>
+                      </li>
+                    </>
+                  )}
                   <li role="none">
-                    <button 
-                      className="admin-button" 
-                      onClick={goToAdminCenter}
+                    <button
+                      className="logout-button"
+                      onClick={closeSesion}
                       role="menuitem"
-                      aria-label="Ir a gestión de usuarios"
+                      aria-label="Cerrar sesión de la aplicación"
                     >
-                      <FiSettings className="admin-icon" aria-hidden="true" />
-                      <span className="admin-text">Gestión de Usuarios</span>
+                      <FiLogOut className="logout-icon" aria-hidden="true" />
+                      <span className="logout-text">Cerrar sesión</span>
                     </button>
                   </li>
-                )}
-                <li role="none">
-                  <button 
-                    className="logout-button" 
-                    onClick={closeSesion}
-                    role="menuitem"
-                    aria-label="Cerrar sesión de la aplicación"
-                  >
-                    <FiLogOut className="logout-icon" aria-hidden="true" />
-                    <span className="logout-text">Cerrar sesión</span>
-                  </button>
-                </li>
-              </ul>
-            </section>
-          ) : (
-            <section>
-              <ul role="none">
-                <li role="none">
-                  <button 
-                    className="login-button" 
-                    onClick={logSesion}
-                    role="menuitem"
-                    aria-label="Ir a página de inicio de sesión"
-                  >
-                    <FiLogIn className="login-icon" aria-hidden="true" />
-                    <span className="logout-text">Iniciar sesión</span>
-                  </button>
-                </li>
-              </ul>
-            </section>
-          )}
-        </div>
-      )}
+                </ul>
+              </section>
+            ) : (
+              <section>
+                <ul role="none">
+                  <li role="none">
+                    <button
+                      className="login-button"
+                      onClick={logSesion}
+                      role="menuitem"
+                      aria-label="Ir a página de inicio de sesión"
+                    >
+                      <FiLogIn className="login-icon" aria-hidden="true" />
+                      <span className="logout-text">Iniciar sesión</span>
+                    </button>
+                  </li>
+                </ul>
+              </section>
+            )}
+          </div>
+        )}
       </header>
     </>
   );
