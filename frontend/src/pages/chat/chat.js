@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import TopBar from "../../components/topBar";
 import { enviarConsulta } from "../../api/auth";
 import { FaThumbsUp, FaThumbsDown, FaMicrophone } from "react-icons/fa";
+import ReactMarkdown from 'react-markdown';
 
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -268,7 +269,21 @@ function Chat() {
                   msg.author === "user" ? "chat__user-msg" : "chat__bot-msg"
                 }
               >
-                <div className="chat__msg-text">{msg.text}</div>
+                <div className="chat__msg-text">
+                  {msg.author === "bot" ? (
+                    <ReactMarkdown
+                      components={{
+                        a: ({node, ...props}) => (
+                          <a {...props} target="_blank" rel="noopener noreferrer" style={{color: '#667eea', textDecoration: 'underline'}} />
+                        )
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.text
+                  )}
+                </div>
                 <div className="chat__msg-time">
                   {msg.timestamp.toLocaleTimeString([], {
                     hour: "2-digit",
