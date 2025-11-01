@@ -373,15 +373,6 @@ function AdminProcedure() {
             </div>
           )}
 
-          <div className="procedures__actions">
-            <button
-              onClick={() => navigate("/login")}
-              className="procedures__logout-btn"
-              aria-label="Cerrar sesión y volver al login"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
         </div>
       </div>
     </>
