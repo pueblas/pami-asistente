@@ -49,14 +49,33 @@ export async function addTramiteUrl(url, token) {
 }
 
 /**
- * Eliminar una URL de trámite por su índice (solo admin)
- * @param {number} urlIndex - Índice de la URL a eliminar
+ * Obtener lista de trámites almacenados en ChromaDB con título, URL y descripción (solo admin)
+ * @param {string} token - Token de autenticación del administrador
+ * @returns {Promise} Response con total y lista de trámites con título, URL y descripción
+ */
+export async function getTramitesList(token) {
+  const response = await axios.get(
+    `${ADMIN_API_URL}tramites-list`,
+    { 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      } 
+    }
+  );
+
+  return response.data;
+}
+
+/**
+ * Eliminar un trámite por su ID (solo admin)
+ * @param {string} tramiteId - ID del trámite a eliminar
  * @param {string} token - Token de autenticación del administrador
  * @returns {Promise} Response con mensaje de confirmación
  */
-export async function deleteTramiteUrl(urlIndex, token) {
+export async function deleteTramiteById(tramiteId, token) {
   const response = await axios.delete(
-    `${ADMIN_API_URL}tramites-urls/${urlIndex}`,
+    `${ADMIN_API_URL}tramites/${tramiteId}`,
     { 
       headers: { 
         'Authorization': `Bearer ${token}`,

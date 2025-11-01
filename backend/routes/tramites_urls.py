@@ -6,7 +6,7 @@ import os
 
 from utils.security import require_role
 from utils.scraper import scrape_tramite, generar_keywords_con_ollama
-from utils.vector_store import add_tramite, delete_tramite
+from utils.vector_store import add_tramite, delete_tramite, get_all_tramites
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -22,6 +22,16 @@ class UrlResponse(BaseModel):
 class TramitesUrlsResponse(BaseModel):
     total: int
     urls: List[UrlResponse]
+
+class TramiteListItem(BaseModel):
+    id: str
+    title: str
+    url: str
+    description: str
+
+class TramitesListResponse(BaseModel):
+    total: int
+    tramites: List[TramiteListItem]
 
 def load_urls_from_config() -> List[str]:
     """Lee las URLs del archivo de configuración"""
@@ -152,55 +162,86 @@ async def add_tramite_url(
             detail=f"Error procesando el trámite: {str(e)}"
         )
 
-@router.delete("/tramites-urls/{url_index}")
-def delete_tramite_url(
-    url_index: int,
+@router.get("/tramites-list", response_model=TramitesListResponse)
+def get_tramites_list(
     admin = Depends(require_role("administrador"))
 ):
     """
-    Eliminar una URL de trámite por su índice (solo admin)
+    Listar todos los trámites almacenados en ChromaDB con título, URL y descripción (solo admin)
+    """
+    try:
+        tramites_data = get_all_tramites()
+        
+        tramites_list = []
+        for tramite in tramites_data:
+            tramites_list.append(TramiteListItem(
+                id=tramite.get("id", ""),
+                title=tramite.get("titulo", "Sin título"),
+                url=tramite.get("url_oficial", ""),
+                description=tramite.get("descripcion", "Sin descripción")[:200] + "..." if len(tramite.get("descripcion", "")) > 200 else tramite.get("descripcion", "Sin descripción")
+            ))
+        
+        return TramitesListResponse(
+            total=len(tramites_list),
+            tramites=tramites_list
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error obteniendo lista de trámites: {str(e)}"
+        )
+
+@router.delete("/tramites/{tramite_id}")
+def delete_tramite_by_id(
+    tramite_id: str,
+    admin = Depends(require_role("administrador"))
+):
+    """
+    Eliminar un trámite por su ID (solo admin)
     
     Proceso:
-    1. Elimina la URL del archivo de configuración
-    2. Elimina el trámite de ChromaDB
+    1. Elimina el trámite de ChromaDB
+    2. Busca y elimina la URL correspondiente del archivo de configuración
     """
-    # Cargar URLs existentes
-    urls = load_urls_from_config()
-    
-    # Validar índice
-    if url_index < 0 or url_index >= len(urls):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Índice de URL inválido"
-        )
-    
-    url_to_delete = urls[url_index]
-    
     try:
-        # Extraer el ID del trámite desde la URL
-        from utils.scraper import extract_id_from_url
-        tramite_id = extract_id_from_url(url_to_delete)
-        
         # 1. Eliminar de ChromaDB
         print(f"🗑️ Eliminando trámite '{tramite_id}' de ChromaDB...")
-        delete_tramite(tramite_id)
+        delete_success = delete_tramite(tramite_id)
         
-        # 2. Eliminar del archivo de configuración
-        urls.pop(url_index)
-        if not save_urls_to_config(urls):
+        if not delete_success:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error guardando la configuración"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Trámite con ID '{tramite_id}' no encontrado en ChromaDB"
             )
+        
+        # 2. Buscar y eliminar URL del archivo de configuración
+        urls = load_urls_from_config()
+        
+        # Buscar la URL que corresponde a este tramite_id
+        url_to_remove = None
+        for url in urls:
+            # Extraer ID de la URL para comparar
+            from utils.scraper import extract_id_from_url
+            if extract_id_from_url(url) == tramite_id:
+                url_to_remove = url
+                break
+        
+        if url_to_remove:
+            urls.remove(url_to_remove)
+            if not save_urls_to_config(urls):
+                print(f"⚠️ Advertencia: No se pudo actualizar el archivo de configuración")
         
         print(f"✅ Trámite '{tramite_id}' eliminado exitosamente")
         
         return {
             "message": "Trámite eliminado exitosamente",
             "tramite_id": tramite_id,
-            "url": url_to_delete
+            "url_removed": url_to_remove
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdAdd, MdDelete, MdVisibility } from "react-icons/md";
+import { MdAdd, MdDelete, MdVisibility, MdSync } from "react-icons/md";
 import {
-  getTramitesUrls,
+  getTramitesList,
   addTramiteUrl,
-  deleteTramiteUrl,
+  deleteTramiteById,
 } from "../../api/tramites";
+import axios from "axios";
 import TopBar from "../../components/topBar/TopBar";
 import "./adminProcedure.css";
 
@@ -13,6 +14,8 @@ function AdminProcedure() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [tramites, setTramites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedTramite, setSelectedTramite] = useState(null);
@@ -37,23 +40,79 @@ function AdminProcedure() {
     setShowViewModal(true);
   };
 
-
-  const handleDeleteTramite = async (tramiteIndex, tramiteUrl) => {
+  const handleSyncTramites = async () => {
     if (
       window.confirm(
-        `¿Estás seguro de que querés eliminar el trámite "${tramiteUrl}"?`
+        "¿Estás seguro de que querés sincronizar todos los trámites? Esto puede tomar varios minutos."
+      )
+    ) {
+      try {
+        setSyncing(true);
+        setError("");
+
+        const token = localStorage.getItem("access_token");
+
+        const response = await axios.post(
+          "http://localhost:8000/admin/scrape-all",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            timeout: 300000, // 5 minutos timeout
+          }
+        );
+
+        if (response.data.success) {
+          // Recargar lista de trámites
+          const tramitesResponse = await getTramitesList(token);
+          setTramites(tramitesResponse.tramites);
+
+          alert(
+            `Sincronización exitosa: ${response.data.inserted_to_db} trámites procesados`
+          );
+        } else {
+          setError(
+            "Error en la sincronización: " + response.data.errors.join(", ")
+          );
+        }
+      } catch (err) {
+        console.error("Error syncing tramites:", err);
+        setError(
+          "Error al sincronizar trámites: " +
+            (err.response?.data?.detail || err.message)
+        );
+      } finally {
+        setSyncing(false);
+      }
+    }
+  };
+
+  const handleDeleteTramite = async (tramiteId, tramiteTitle) => {
+    console.log("🔍 DEBUG - handleDeleteTramite called with:");
+    console.log("  tramiteId:", tramiteId);
+    console.log("  tramiteTitle:", tramiteTitle);
+    console.log("  typeof tramiteId:", typeof tramiteId);
+    
+    if (
+      window.confirm(
+        `¿Estás seguro de que querés eliminar el trámite "${tramiteTitle}"?`
       )
     ) {
       try {
         const token = localStorage.getItem("access_token");
-        await deleteTramiteUrl(tramiteIndex, token);
+        console.log("🚀 Calling deleteTramiteById with ID:", tramiteId);
+        await deleteTramiteById(tramiteId, token);
 
         // Refresh tramites list
-        const response = await getTramitesUrls(token);
-        setTramites(response.urls);
+        const response = await getTramitesList(token);
+        setTramites(response.tramites);
+        
+        alert("Trámite eliminado exitosamente");
       } catch (err) {
         console.error("Error deleting tramite:", err);
-        setError("Error al eliminar trámite");
+        setError("Error al eliminar trámite: " + (err.response?.data?.detail || err.message));
       }
     }
   };
@@ -69,16 +128,21 @@ function AdminProcedure() {
     }
 
     try {
+      setAdding(true);
+      setModalError("");
+      
       const token = localStorage.getItem("access_token");
-      await addTramiteUrl(newUrl, token);
+      const result = await addTramiteUrl(newUrl, token);
 
       // Refresh tramites list
-      const response = await getTramitesUrls(token);
-      setTramites(response.urls);
+      const response = await getTramitesList(token);
+      setTramites(response.tramites);
 
       setShowAddModal(false);
       setNewUrl("");
       setModalError("");
+      
+      alert(`Trámite "${result.titulo}" agregado exitosamente`);
     } catch (err) {
       console.error("Error creating tramite:", err);
       if (err.response && err.response.data && err.response.data.detail) {
@@ -86,9 +150,10 @@ function AdminProcedure() {
       } else {
         setModalError("Error al crear trámite");
       }
+    } finally {
+      setAdding(false);
     }
   };
-
 
   const closeModals = () => {
     setShowAddModal(false);
@@ -108,8 +173,11 @@ function AdminProcedure() {
           return;
         }
 
-        const response = await getTramitesUrls(token);
-        setTramites(response.urls);
+        const response = await getTramitesList(token);
+        console.log("🔍 DEBUG - getTramitesList response:", response);
+        console.log("🔍 DEBUG - tramites array:", response.tramites);
+        console.log("🔍 DEBUG - first tramite:", response.tramites[0]);
+        setTramites(response.tramites);
         setLoading(false);
       } catch (err) {
         console.error("Error loading tramites:", err);
@@ -143,6 +211,16 @@ function AdminProcedure() {
             <h2 className="procedures__title">Gestión de Trámites</h2>
             <div className="procedures__header-actions">
               <button
+                className="procedures__sync-btn"
+                onClick={handleSyncTramites}
+                disabled={syncing}
+                aria-label="Sincronizar trámites desde PAMI"
+                title="Sincronizar todos los trámites desde las URLs configuradas"
+              >
+                <MdSync size={20} />
+                {syncing ? "Sincronizando..." : "Sincronizar"}
+              </button>
+              <button
                 className="procedures__create-btn"
                 onClick={handleAddTramite}
                 aria-label="Agregar nuevo trámite"
@@ -157,25 +235,26 @@ function AdminProcedure() {
 
           {/* Mobile-first Cards Layout */}
           <div className="procedures__grid">
-            {tramites.map((tramite) => (
-              <div key={tramite.index} className="procedure__card">
+            {tramites.map((tramite, index) => {
+              console.log(`🔍 DEBUG - Rendering tramite ${index}:`, tramite);
+              console.log(`🔍 DEBUG - tramite.id:`, tramite.id);
+              return (
+                <div key={index} className="procedure__card">
                 <div className="procedure__header">
-                  <h3 className="procedure__title">{tramite.url}</h3>
+                  <h3 className="procedure__title">{tramite.title}</h3>
                   <div className="procedure__actions">
                     <button
                       className="procedure__action-btn procedure__view-btn"
                       onClick={() => handleViewTramite(tramite)}
-                      aria-label={`Ver contenido de ${tramite.url}`}
+                      aria-label={`Ver contenido de ${tramite.title}`}
                       title="Ver contenido"
                     >
                       <MdVisibility size={20} />
                     </button>
                     <button
                       className="procedure__action-btn procedure__delete-btn"
-                      onClick={() =>
-                        handleDeleteTramite(tramite.index, tramite.url)
-                      }
-                      aria-label={`Eliminar ${tramite.url}`}
+                      onClick={() => handleDeleteTramite(tramite.id, tramite.title)}
+                      aria-label={`Eliminar ${tramite.title}`}
                       title="Eliminar trámite"
                     >
                       <MdDelete size={20} />
@@ -186,7 +265,8 @@ function AdminProcedure() {
                   <p className="procedure__url">{tramite.url}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {tramites.length === 0 && !error && (
@@ -197,7 +277,9 @@ function AdminProcedure() {
           {showAddModal && (
             <div className="procedures__modal-overlay">
               <div className="procedures__modal-content">
-                <h3 className="procedures__modal-title">Agregar Nuevo Trámite</h3>
+                <h3 className="procedures__modal-title">
+                  Agregar Nuevo Trámite
+                </h3>
                 <form
                   onSubmit={handleSubmitAdd}
                   className="procedures__form-content"
@@ -214,7 +296,8 @@ function AdminProcedure() {
                       placeholder="https://www.pami.org.ar/tramite/nombre-tramite"
                     />
                     <small className="procedures__help-text">
-                      La URL debe ser de un trámite de PAMI (https://www.pami.org.ar/tramite/...)
+                      La URL debe ser de un trámite de PAMI
+                      (https://www.pami.org.ar/tramite/...)
                     </small>
                   </div>
 
@@ -227,11 +310,16 @@ function AdminProcedure() {
                       type="button"
                       className="procedures__cancel-btn"
                       onClick={closeModals}
+                      disabled={adding}
                     >
                       Cancelar
                     </button>
-                    <button type="submit" className="procedures__submit-btn">
-                      Agregar Trámite
+                    <button 
+                      type="submit" 
+                      className="procedures__submit-btn"
+                      disabled={adding}
+                    >
+                      {adding ? "Procesando..." : "Agregar Trámite"}
                     </button>
                   </div>
                 </form>
@@ -244,30 +332,46 @@ function AdminProcedure() {
             <div className="procedures__modal-overlay">
               <div className="procedures__modal-content procedures__modal-content--large">
                 <h3 className="procedures__modal-title">
-                  Trámite #{selectedTramite.index}
+                  {selectedTramite.title}
                 </h3>
                 <div className="procedure__view-content">
                   <p>
-                    <strong>URL:</strong> {selectedTramite.url}
-                  </p>
-                  <p>
-                    <strong>Índice:</strong> {selectedTramite.index}
+                    <strong>URL:</strong>{" "}
+                    <a
+                      href={selectedTramite.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {selectedTramite.url}
+                    </a>
                   </p>
                   <div className="procedure__content">
+                    <h4>Descripción:</h4>
+                    <p>{selectedTramite.description}</p>
+                  </div>
+                  <div className="procedure__content">
                     <h4>Información:</h4>
-                    <p>Este trámite ha sido procesado automáticamente desde la URL de PAMI.</p>
-                    <p>Para ver el contenido completo, visite la URL directamente.</p>
+                    <p>
+                      Este trámite ha sido procesado automáticamente desde la
+                      URL de PAMI.
+                    </p>
+                    <p>
+                      Para ver el contenido completo, haga clic en la URL de
+                      arriba.
+                    </p>
                   </div>
                 </div>
                 <div className="procedures__modal-buttons">
-                  <button className="procedures__cancel-btn" onClick={closeModals}>
+                  <button
+                    className="procedures__cancel-btn"
+                    onClick={closeModals}
+                  >
                     Cerrar
                   </button>
                 </div>
               </div>
             </div>
           )}
-
 
           <div className="procedures__actions">
             <button
