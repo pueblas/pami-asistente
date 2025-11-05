@@ -7,3 +7,4 @@ export { default as AdminUsers } from "./adminUsers/adminUsers";
 export { default as Recover } from "./recover/recover";
 export { default as AdminProcedures } from "./adminProcedure/adminProcedure";
 export { default as AdminHome } from "./adminHome/adminHome";
+export { default as AdminGraphics } from "./adminGraphics/adminGraphics";
