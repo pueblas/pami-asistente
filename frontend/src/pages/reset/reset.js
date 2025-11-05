@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "./reset.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import TopBar from "../../components/topBar";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -12,6 +12,13 @@ function Reset() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordValid, setPasswordValid] = useState({
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    special: false,
+  });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,6 +37,16 @@ function Reset() {
     }
   }, [token]);
 
+  const validatePassword = (pwd) => {
+    const length = pwd.length >= 8;
+    const lowercase = /[a-z]/.test(pwd);
+    const uppercase = /[A-Z]/.test(pwd);
+    const number = /[0-9]/.test(pwd);
+    const special = /[!@#$%^&*(),.?":{}|<>\[\]\\/\\~`'\-+=;:_]/.test(pwd);
+
+    setPasswordValid({ length, lowercase, uppercase, number, special });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,8 +61,10 @@ function Reset() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+    // Validar requisitos similares a registro
+    const { length, lowercase, uppercase, number, special } = passwordValid;
+    if (!length || !lowercase || !uppercase || !number || !special) {
+      setError("La contraseña no cumple los requisitos mínimos");
       return;
     }
 
@@ -135,7 +154,7 @@ function Reset() {
                   required
                   placeholder="Debe incluir: mayúscula, número y carácter especial"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); validatePassword(e.target.value); }}
                   disabled={loading}
                   className="reset-password-input"
                 />
@@ -151,6 +170,23 @@ function Reset() {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
+              <ul id="password-requirements" className="password-requirements" aria-live="polite">
+                <li className={passwordValid.lowercase ? 'valid' : 'invalid'}>
+                  {passwordValid.lowercase ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene minúsculas</span>
+                </li>
+                <li className={passwordValid.uppercase ? 'valid' : 'invalid'}>
+                  {passwordValid.uppercase ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene mayúsculas</span>
+                </li>
+                <li className={passwordValid.number ? 'valid' : 'invalid'}>
+                  {passwordValid.number ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene número</span>
+                </li>
+                <li className={passwordValid.special ? 'valid' : 'invalid'}>
+                  {passwordValid.special ? <FaCheckCircle /> : <FaTimesCircle />} <span>Contiene carácter especial</span>
+                </li>
+                <li className={passwordValid.length ? 'valid' : 'invalid'}>
+                  {passwordValid.length ? <FaCheckCircle /> : <FaTimesCircle />} <span>Al menos 8 caracteres</span>
+                </li>
+              </ul>
             </div>
 
             <div className="reset-form-group">
