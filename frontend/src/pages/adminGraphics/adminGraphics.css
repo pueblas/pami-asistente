@@ -1,0 +1,36 @@
+/* Styles for admin graphics page */
+.admin-graphics {
+  padding: var(--spacing-lg);
+  color: var(--text-primary);
+  font-family: var(--font-family-body);
+}
+
+.admin-graphics h1 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.chart-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.chart-card h2 {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Ensure chart canvas scales responsively */
+.chart-card canvas {
+  max-height: 320px;
+}
+
+/* Make default neutral color grey for dataset when inactive (but our datasets use color vars) */
+.chart-legend-item.inactive {
+  color: var(--feedback-neutral-color);
+}
