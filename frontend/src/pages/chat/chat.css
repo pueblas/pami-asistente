@@ -98,6 +98,15 @@
   transform: scale(1.1);
 }
 
+/* Color por defecto gris; si la clase like/dislike está activa, aplicar color */
+.chat__thumb-btn.like.active {
+  color: var(--feedback-like-color);
+}
+
+.chat__thumb-btn.dislike.active {
+  color: var(--feedback-dislike-color);
+}
+
 .chat__input {
   user-select: none;
   position: absolute;
@@ -258,6 +267,135 @@
   }
 }
 
+/* ===== FEEDBACK MODAL (global) ===== */
+.feedback-modal {
+  position: fixed;              /* se separa del flujo del chat */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);  /* fondo semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;                /* sobre el resto */
+  animation: fadeInModal 0.3s ease;
+}
+
+.feedback-content {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 400px;
+  padding: var(--spacing-xl);
+  text-align: center;
+  animation: popUpModal 0.25s ease;
+}
+
+.feedback-content h3 {
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-family-headings);
+  color: var(--brand-primary);
+}
+
+.feedback-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.feedback-buttons button {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  color: var(--feedback-neutral-color); /* default gris */
+}
+
+.feedback-buttons button:hover {
+  transform: scale(1.2);
+}
+
+/* Diferenciar like/dislike cuando están activos */
+.feedback-buttons button.like.active {
+  color: var(--feedback-like-color);
+}
+
+.feedback-buttons button.dislike.active {
+  color: var(--feedback-dislike-color);
+}
+
+.feedback-content textarea {
+  width: 100%;
+  height: 80px;
+  resize: none;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-family-body);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.feedback-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.feedback-actions button {
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-fast);
+}
+
+.feedback-actions button:first-child {
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: 1px solid var(--button-secondary-border);
+}
+
+.feedback-actions button:first-child:hover {
+  background: var(--button-secondary-hover);
+  color: var(--text-inverse);
+}
+
+.feedback-actions button:last-child {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.feedback-actions button:last-child:hover {
+  background: var(--button-primary-hover);
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popUpModal {
+  from {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Mobile pequeño: hasta 480px */
@@ -294,6 +432,11 @@
     gap: var(--spacing-xs);
   }
 
+  /* ===== FEEDBACK MODAL ===== */
+/* (moved to global, see above) */
+
+
+  
   .chat__thumb-btn {
     font-size: var(--font-size-xs);
     padding: var(--spacing-xs);
