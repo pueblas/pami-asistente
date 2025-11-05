@@ -87,13 +87,16 @@ def add_tramite(tramite: Dict) -> bool:
         traceback.print_exc()
         return False
 
-def search_tramites(query: str, n_results: int = 3) -> List[Dict]:
+def search_tramites(query: str, n_results: int = 3, distance_threshold: float = 1.0) -> List[Dict]:
     """
     Busca trámites similares a la consulta
     
     Args:
         query: Consulta del usuario
         n_results: Cantidad de resultados a retornar
+        distance_threshold: Umbral de distancia (mayor = más permisivo)
+                           Valores típicos: 0.8-2.0
+                           Si la distancia > threshold, se descarta el resultado
     
     Returns:
         Lista de trámites relevantes (como dicts)
@@ -103,17 +106,26 @@ def search_tramites(query: str, n_results: int = 3) -> List[Dict]:
         
         # Buscar en ChromaDB (ChromaDB embebe el query automáticamente)
         results = collection.query(
-            query_texts=[query],  # Cambiar de query_embeddings a query_texts
+            query_texts=[query],
             n_results=n_results
         )
         
-        # Parsear resultados
+        # Parsear resultados y filtrar por relevancia
         tramites = []
-        if results['metadatas'] and results['metadatas'][0]:
-            for metadata in results['metadatas'][0]:
+        if results['metadatas'] and results['metadatas'][0] and results['distances']:
+            for i, metadata in enumerate(results['metadatas'][0]):
+                distance = results['distances'][0][i]
+                
+                # Filtrar resultados poco relevantes
+                if distance > distance_threshold:
+                    print(f"⚠️ Resultado descartado por baja relevancia: {metadata.get('titulo', 'N/A')} (distancia: {distance:.2f})")
+                    continue
+                
                 # Recuperar el JSON completo desde metadata
                 if 'json_data' in metadata:
-                    tramites.append(json.loads(metadata['json_data']))
+                    tramite = json.loads(metadata['json_data'])
+                    print(f"✅ Resultado relevante: {tramite['titulo']} (distancia: {distance:.2f})")
+                    tramites.append(tramite)
         
         return tramites
         
