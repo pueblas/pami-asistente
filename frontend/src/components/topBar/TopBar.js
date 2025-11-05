@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiLogOut, FiLogIn, FiSettings } from "react-icons/fi";
-import { MdPeople, MdDescription, MdChat } from "react-icons/md";
+import { MdPeople, MdDescription, MdChat, MdShowChart } from "react-icons/md";
 import "./TopBar.css";
 import { limpiarContexto } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +36,10 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
 
   const goToChat = () => {
     navigate("/chat");
+  };
+
+  const goToAdminGraphics = () => {
+    navigate("/admin-graphics");
   };
 
   const [userRole, setUserRole] = useState("");
@@ -185,6 +189,21 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
                         >
                           <MdChat className="admin-icon" aria-hidden="true" />
                           <span className="admin-text">Chat</span>
+                        </button>
+                      </li>
+                      <li role="none">
+                        <button
+                          className="admin-button"
+                          onClick={goToAdminGraphics}
+                          role="menuitem"
+                          aria-label="Ir a estadísticas de feedback"
+                        >
+                          <MdShowChart
+                            className="admin-icon"
+                            aria-hidden="true"
+                            style={{ fontSize: '1.15rem' }}
+                          />
+                          <span className="admin-text">Estadísticas</span>
                         </button>
                       </li>
                     </>
