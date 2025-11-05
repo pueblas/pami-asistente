@@ -402,15 +402,6 @@ function AdminUsers() {
           </div>
         )}
 
-        <div className="admin__actions">
-          <button 
-            onClick={() => navigate('/login')} 
-            className="admin__logout-btn"
-            aria-label="Cerrar sesión y volver al login"
-          >
-            Cerrar Sesión
-          </button>
-        </div>
       </div>
     </div>
     </>

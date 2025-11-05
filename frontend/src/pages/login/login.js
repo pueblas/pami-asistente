@@ -25,7 +25,7 @@ function Login() {
       if (role == "usuario") {
         navigate("/chat");
       } else {
-        navigate("/admin-center");
+        navigate("/admin-home");
       }
     } catch (err) {
       console.error("Error en login:", err);
@@ -41,67 +41,69 @@ function Login() {
     <>
       <TopBar showUserMenu={false} />
       <div className="login__container">
-      <div className="login__background"></div>
-      <div className="login__content">
-        <div className="login__box">
-        <h2 className="login__title">Iniciar sesión</h2>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <form className="login__form" onSubmit={handleSubmit}>
-          <input
-            className="login__input"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <div className="login__password-wrapper">
-            <input
-              className="login__password-input"
-              type={showPassword ? "text" : "password"}
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="login__password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
+        <div className="login__background"></div>
+        <div className="login__content">
+          <div className="login__box">
+            <h2 className="login__title">Iniciar sesión</h2>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <form className="login__form" onSubmit={handleSubmit}>
+              <input
+                className="login__input"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <div className="login__password-wrapper">
+                <input
+                  className="login__password-input"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="login__password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+              <button
+                className="login__submit-button"
+                type="submit"
+                aria-label="Iniciar sesión"
+              >
+                Entrar
+              </button>
+              <div className="login__recover">
+                <Link
+                  to="/recover"
+                  className="text-lr text-red-100 hover:text-blue-500"
+                >
+                  Olvidé mi contraseña
+                </Link>
+              </div>
+            </form>
+            <div className="login__register-link">
+              ¿No tenés cuenta?{" "}
+              <button
+                className="login__register-button"
+                onClick={() => navigate("/register")}
+                aria-label="Ir a página de registro"
+              >
+                Registrate
+              </button>
+            </div>
           </div>
-          <button 
-            className="login__submit-button" 
-            type="submit"
-            aria-label="Iniciar sesión"
-          >
-            Entrar
-          </button>
-          <div className="login__recover">
-            <Link
-              to="/recover"
-              className="text-lr text-red-100 hover:text-blue-500"
-            >
-              Olvidé mi contraseña
-            </Link>
-          </div>
-        </form>
-        <div className="login__register-link">
-          ¿No tenés cuenta?{" "}
-          <button 
-            className="login__register-button" 
-            onClick={() => navigate("/register")}
-            aria-label="Ir a página de registro"
-          >
-            Registrate
-          </button>
-        </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

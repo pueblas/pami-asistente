@@ -138,11 +138,20 @@ def search_tramites(query: str, n_results: int = 3, distance_threshold: float = 
 def delete_tramite(tramite_id: str) -> bool:
     try:
         collection = get_or_create_collection()
+        
+        # Verificar si el trámite existe antes de eliminarlo
+        existing = collection.get(ids=[tramite_id])
+        if not existing['ids']:
+            print(f"❌ Trámite '{tramite_id}' no encontrado en ChromaDB")
+            return False
+        
         collection.delete(ids=[tramite_id])
         print(f"✅ Trámite '{tramite_id}' eliminado de ChromaDB")
         return True
     except Exception as e:
         print(f"❌ Error eliminando trámite: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def get_collection_count() -> int:
@@ -152,3 +161,32 @@ def get_collection_count() -> int:
     except Exception as e:
         print(f"❌ Error obteniendo count: {e}")
         return 0
+
+def get_all_tramites() -> List[Dict]:
+    """
+    Obtiene todos los trámites almacenados en ChromaDB
+    
+    Returns:
+        Lista de diccionarios con todos los trámites
+    """
+    try:
+        collection = get_or_create_collection()
+        
+        # Obtener todos los documentos sin filtros
+        results = collection.get()
+        
+        tramites = []
+        if results['metadatas']:
+            for metadata in results['metadatas']:
+                # Recuperar el JSON completo desde metadata
+                if 'json_data' in metadata:
+                    tramites.append(json.loads(metadata['json_data']))
+        
+        print(f"✅ Recuperados {len(tramites)} trámites de ChromaDB")
+        return tramites
+        
+    except Exception as e:
+        print(f"❌ Error obteniendo todos los trámites: {e}")
+        import traceback
+        traceback.print_exc()
+        return []

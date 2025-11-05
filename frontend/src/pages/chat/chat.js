@@ -6,6 +6,7 @@ import { enviarConsulta } from "../../api/auth";
 import { FaThumbsUp, FaThumbsDown, FaMicrophone } from "react-icons/fa";
 import ReactMarkdown from 'react-markdown';
 
+
 function Chat() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -13,8 +14,9 @@ function Chat() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
-
+  // reactions will be stored per message as msg.reaction = true|false
   const [isListening, setIsListening] = useState(false);
+  
 
 
   const loadingMessages = [
@@ -35,6 +37,7 @@ function Chat() {
   const sendMessage = async () => {
     if (newMessage.trim() && !isLoading) {
       const userMsg = {
+        id: `u-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
         author: "user",
         text: newMessage.trim(),
         timestamp: new Date(),
@@ -54,11 +57,22 @@ function Chat() {
 
       try {
         const token = localStorage.getItem("access_token");
+        if (!token) {
+          // If there's no token, force login to avoid 401 from the API
+          alert('Debes iniciar sesión para usar el chat');
+          navigate('/login');
+          return;
+        }
+
         const response = await enviarConsulta(userMsg.text, token);
 
         const botMsg = {
+          id: `b-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
           author: "bot",
           text: response.respuesta,
+          // store the user message text that produced this bot reply so
+          // reactions can be associated reliably without relying on array index
+          userText: userMsg.text,
           timestamp: new Date(),
         };
 
@@ -75,6 +89,7 @@ function Chat() {
         console.error("Error enviando consulta:", error);
 
         const errorMsg = {
+          id: `b-err-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
           author: "bot",
           text: "Lo siento, hubo un error al procesar tu consulta. Por favor, intentá nuevamente.",
           timestamp: new Date(),
@@ -96,11 +111,46 @@ function Chat() {
     }
   };
 
-  const enviarFeedback = (tipo) => {
-    if (tipo === "up") {
-      console.log("Usuario dio pulgar arriba");
-    } else {
-      console.log("Usuario dio pulgar abajo");
+  const handleThumbClick = async (tipo, messageId) => {
+    const reaction = tipo === 'up';
+
+    // require auth (token) to send feedback
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('Debes iniciar sesión para enviar feedback');
+      return;
+    }
+
+    // Capture message from current state to build payload
+    const currentMsg = messages.find((m) => m.id === messageId) || {};
+
+    // Optimistic UI update: set reaction on the message by id
+    setMessages((prev) => prev.map((m) => (m.id === messageId ? { ...m, reaction } : m)));
+
+    try {
+      const payload = {
+        me_gusta: reaction,
+        mensaje_usuario: currentMsg.userText || "",
+        mensaje_bot: currentMsg.text || "",
+      };
+
+      const res = await fetch("http://localhost:8000/feedback/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      // success - nothing else to do for now
+    } catch (err) {
+      // revert optimistic update on error (clear reaction)
+      setMessages((prev) => prev.map((m) => (m.id === messageId ? { ...m, reaction: undefined } : m)));
+      console.error("Error enviando feedback:", err);
     }
   };
 
@@ -178,9 +228,16 @@ function Chat() {
 
       try {
         const token = localStorage.getItem("access_token");
+        if (!token) {
+          alert('Debes iniciar sesión para usar el chat');
+          navigate('/login');
+          return;
+        }
+
         const response = await enviarConsulta(userMsg.text, token);
 
         const botMsg = {
+          id: `b-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
           author: "bot",
           text: response.respuesta,
           timestamp: new Date(),
@@ -191,6 +248,7 @@ function Chat() {
         console.error("Error enviando consulta:", error);
 
         const errorMsg = {
+          id: `b-err-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
           author: "bot",
           text: "Lo siento, hubo un error al procesar tu consulta de voz. Por favor, intentá nuevamente.",
           timestamp: new Date(),
@@ -213,9 +271,10 @@ function Chat() {
         setIsLoading(false);
       }
     };
-    validarAcceso();
+    //validarAcceso();
   }, [navigate]);
 
+  
   useEffect(() => {
     let interval;
 
@@ -264,7 +323,7 @@ function Chat() {
 
             {messages.map((msg, index) => (
               <div
-                key={index}
+                key={msg.id || index}
                 className={
                   msg.author === "user" ? "chat__user-msg" : "chat__bot-msg"
                 }
@@ -291,18 +350,18 @@ function Chat() {
                   })}
                 </div>
                 {msg.author === "bot" && (
-                  <div className="chat__feedback-buttons">
+                    <div className="chat__feedback-buttons">
                     <button
-                      className="chat__thumb-btn"
-                      onClick={() => enviarFeedback("up")}
-                      aria-label="Calificar respuesta como útil"
+                      className={`chat__thumb-btn like ${msg.reaction === true ? 'active' : ''}`}
+                      onClick={() => handleThumbClick('up', msg.id)}
+                      aria-label="Me gusta"
                     >
                       <FaThumbsUp />
                     </button>
                     <button
-                      className="chat__thumb-btn"
-                      onClick={() => enviarFeedback("down")}
-                      aria-label="Calificar respuesta como no útil"
+                      className={`chat__thumb-btn dislike ${msg.reaction === false ? 'active' : ''}`}
+                      onClick={() => handleThumbClick('down', msg.id)}
+                      aria-label="No me gusta"
                     >
                       <FaThumbsDown />
                     </button>

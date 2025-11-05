@@ -77,6 +77,39 @@
   background: var(--button-primary-hover);
 }
 
+.procedures__sync-btn {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  border: 1px solid var(--button-secondary-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  font-family: var(--font-family-body);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.procedures__sync-btn:hover {
+  background: var(--brand-primary);
+  color: var(--text-inverse);
+  transform: translateY(-1px);
+}
+
+.procedures__sync-btn:disabled {
+  background: var(--color-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.procedures__sync-btn:disabled:hover {
+  background: var(--color-muted);
+  transform: none;
+}
+
 .procedures__error {
   color: var(--color-error);
   text-align: center;
@@ -439,7 +472,8 @@
     gap: var(--spacing-sm);
   }
 
-  .procedures__create-btn {
+  .procedures__create-btn,
+  .procedures__sync-btn {
     width: 100%;
     text-align: center;
     justify-content: center;
@@ -535,7 +569,8 @@
     flex-direction: row;
   }
 
-  .procedures__create-btn {
+  .procedures__create-btn,
+  .procedures__sync-btn {
     width: auto;
   }
 

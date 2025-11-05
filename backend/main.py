@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db.connection import engine, Base
-from models import user, role
+from models import user, role, feedback
 from db.init_data import create_initial_data
-from routes import auth, admin, chat, scraping, tramites_urls
+from routes import auth, admin, chat, scraping, tramites_urls, feedback
 
 # Crear las tablas
 Base.metadata.create_all(bind=engine)
@@ -16,7 +16,9 @@ app = FastAPI(title="PAMI Asistente API")
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    # Allow the local dev origins commonly used (localhost and 127.0.0.1)
+    # Keep this list minimal for security; expand only for trusted dev hosts.
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,6 +30,7 @@ app.include_router(admin.router)
 app.include_router(chat.router)
 app.include_router(scraping.router)
 app.include_router(tramites_urls.router)
+app.include_router(feedback.router)
 
 @app.get("/")
 def read_root():

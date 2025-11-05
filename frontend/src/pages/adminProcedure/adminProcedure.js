@@ -1,77 +1,118 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdAdd, MdEdit, MdDelete, MdVisibility } from "react-icons/md";
+import { MdAdd, MdDelete, MdVisibility, MdSync } from "react-icons/md";
 import {
-  fetchProcedures,
-  createProcedure,
-  updateProcedure,
-  deleteProcedure,
-} from "../../api/auth";
+  getTramitesList,
+  addTramiteUrl,
+  deleteTramiteById,
+} from "../../api/tramites";
+import axios from "axios";
 import TopBar from "../../components/topBar/TopBar";
 import "./adminProcedure.css";
 
 function AdminProcedure() {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [procedures, setProcedures] = useState([]);
+  const [tramites, setTramites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedProcedure, setSelectedProcedure] = useState(null);
+  const [selectedTramite, setSelectedTramite] = useState(null);
   const [error, setError] = useState("");
   const [modalError, setModalError] = useState("");
-  const [newProcedure, setNewProcedure] = useState({
-    title: "",
-    url: "",
-    content: "",
-  });
+  const [newUrl, setNewUrl] = useState("");
   const navigate = useNavigate();
 
-  // URL validation for PAMI domain
+  // URL validation for PAMI tramite domain
   const validatePamiUrl = (url) => {
-    const pamiPattern =
-      /^https:\/\/www\.pami\.org\.ar\/tramites\/[a-zA-Z0-9\-]+$/;
-    return pamiPattern.test(url);
+    return url.includes("pami.org.ar/tramite/");
   };
 
-  const handleAddProcedure = () => {
-    setNewProcedure({ title: "", url: "", content: "" });
+  const handleAddTramite = () => {
+    setNewUrl("");
     setModalError("");
     setShowAddModal(true);
   };
 
-  const handleViewProcedure = (procedure) => {
-    setSelectedProcedure(procedure);
+  const handleViewTramite = (tramite) => {
+    setSelectedTramite(tramite);
     setShowViewModal(true);
   };
 
-  const handleEditProcedure = (procedure) => {
-    setSelectedProcedure(procedure);
-    setNewProcedure({
-      title: procedure.title,
-      url: procedure.url,
-      content: procedure.content,
-    });
-    setModalError("");
-    setShowEditModal(true);
-  };
-
-  const handleDeleteProcedure = async (procedureId, procedureTitle) => {
+  const handleSyncTramites = async () => {
     if (
       window.confirm(
-        `¿Estás seguro de que querés eliminar el trámite "${procedureTitle}"?`
+        "¿Estás seguro de que querés sincronizar todos los trámites? Esto puede tomar varios minutos."
+      )
+    ) {
+      try {
+        setSyncing(true);
+        setError("");
+
+        const token = localStorage.getItem("access_token");
+
+        const response = await axios.post(
+          "http://localhost:8000/admin/scrape-all",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            timeout: 300000, // 5 minutos timeout
+          }
+        );
+
+        if (response.data.success) {
+          // Recargar lista de trámites
+          const tramitesResponse = await getTramitesList(token);
+          setTramites(tramitesResponse.tramites);
+
+          alert(
+            `Sincronización exitosa: ${response.data.inserted_to_db} trámites procesados`
+          );
+        } else {
+          setError(
+            "Error en la sincronización: " + response.data.errors.join(", ")
+          );
+        }
+      } catch (err) {
+        console.error("Error syncing tramites:", err);
+        setError(
+          "Error al sincronizar trámites: " +
+            (err.response?.data?.detail || err.message)
+        );
+      } finally {
+        setSyncing(false);
+      }
+    }
+  };
+
+  const handleDeleteTramite = async (tramiteId, tramiteTitle) => {
+    console.log("🔍 DEBUG - handleDeleteTramite called with:");
+    console.log("  tramiteId:", tramiteId);
+    console.log("  tramiteTitle:", tramiteTitle);
+    console.log("  typeof tramiteId:", typeof tramiteId);
+    
+    if (
+      window.confirm(
+        `¿Estás seguro de que querés eliminar el trámite "${tramiteTitle}"?`
       )
     ) {
       try {
         const token = localStorage.getItem("access_token");
-        await deleteProcedure(procedureId, token);
+        console.log("🚀 Calling deleteTramiteById with ID:", tramiteId);
+        await deleteTramiteById(tramiteId, token);
 
-        // Refresh procedures list
-        const response = await fetchProcedures(token);
-        setProcedures(response.data);
+        // Refresh tramites list
+        const response = await getTramitesList(token);
+        setTramites(response.tramites);
+        
+        alert("Trámite eliminado exitosamente");
       } catch (err) {
-        console.error("Error deleting procedure:", err);
-        setError("Error al eliminar procedimiento");
+        console.error("Error deleting tramite:", err);
+        setError("Error al eliminar trámite: " + (err.response?.data?.detail || err.message));
       }
     }
   };
@@ -79,72 +120,50 @@ function AdminProcedure() {
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
 
-    if (!validatePamiUrl(newProcedure.url)) {
+    if (!validatePamiUrl(newUrl)) {
       setModalError(
-        "La URL debe ser del dominio https://www.pami.org.ar/tramites/"
+        "La URL debe ser de un trámite de PAMI (https://www.pami.org.ar/tramite/...)"
       );
       return;
     }
 
     try {
+      setAdding(true);
+      setModalError("");
+      
       const token = localStorage.getItem("access_token");
-      await createProcedure(newProcedure, token);
+      const result = await addTramiteUrl(newUrl, token);
 
-      // Refresh procedures list
-      const response = await fetchProcedures(token);
-      setProcedures(response.data);
+      // Refresh tramites list
+      const response = await getTramitesList(token);
+      setTramites(response.tramites);
 
       setShowAddModal(false);
-      setNewProcedure({ title: "", url: "", content: "" });
+      setNewUrl("");
       setModalError("");
+      
+      alert(`Trámite "${result.titulo}" agregado exitosamente`);
     } catch (err) {
-      console.error("Error creating procedure:", err);
+      console.error("Error creating tramite:", err);
       if (err.response && err.response.data && err.response.data.detail) {
         setModalError(err.response.data.detail);
       } else {
-        setModalError("Error al crear tramite");
+        setModalError("Error al crear trámite");
       }
-    }
-  };
-
-  const handleSubmitEdit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const token = localStorage.getItem("access_token");
-      await updateProcedure(
-        selectedProcedure.id,
-        { title: newProcedure.title },
-        token
-      );
-
-      // Refresh procedures list
-      const response = await fetchProcedures(token);
-      setProcedures(response.data);
-
-      setShowEditModal(false);
-      setSelectedProcedure(null);
-      setModalError("");
-    } catch (err) {
-      console.error("Error updating procedure:", err);
-      if (err.response && err.response.data && err.response.data.detail) {
-        setModalError(err.response.data.detail);
-      } else {
-        setModalError("Error al actualizar tramite");
-      }
+    } finally {
+      setAdding(false);
     }
   };
 
   const closeModals = () => {
     setShowAddModal(false);
     setShowViewModal(false);
-    setShowEditModal(false);
-    setSelectedProcedure(null);
+    setSelectedTramite(null);
     setModalError("");
   };
 
   useEffect(() => {
-    const loadProcedures = async () => {
+    const loadTramites = async () => {
       try {
         const token = localStorage.getItem("access_token");
         const role = localStorage.getItem("role");
@@ -154,24 +173,27 @@ function AdminProcedure() {
           return;
         }
 
-        const response = await fetchProcedures(token);
-        setProcedures(response.data);
+        const response = await getTramitesList(token);
+        console.log("🔍 DEBUG - getTramitesList response:", response);
+        console.log("🔍 DEBUG - tramites array:", response.tramites);
+        console.log("🔍 DEBUG - first tramite:", response.tramites[0]);
+        setTramites(response.tramites);
         setLoading(false);
       } catch (err) {
-        console.error("Error loading procedures:", err);
-        setError("Error al cargar tramites");
+        console.error("Error loading tramites:", err);
+        setError("Error al cargar trámites");
         setLoading(false);
       }
     };
 
-    loadProcedures();
+    loadTramites();
   }, [navigate]);
 
   if (loading) {
     return (
       <div className="procedures__container">
         <div className="procedures__box">
-          <p>Cargando tramites...</p>
+          <p>Cargando trámites...</p>
         </div>
       </div>
     );
@@ -186,15 +208,25 @@ function AdminProcedure() {
       <div className="procedures__container">
         <div className="procedures__box">
           <div className="procedures__header">
-            <h2 className="procedures__title">Gestión de Tramites</h2>
+            <h2 className="procedures__title">Gestión de Trámites</h2>
             <div className="procedures__header-actions">
               <button
+                className="procedures__sync-btn"
+                onClick={handleSyncTramites}
+                disabled={syncing}
+                aria-label="Sincronizar trámites desde PAMI"
+                title="Sincronizar todos los trámites desde las URLs configuradas"
+              >
+                <MdSync size={20} />
+                {syncing ? "Sincronizando..." : "Sincronizar"}
+              </button>
+              <button
                 className="procedures__create-btn"
-                onClick={handleAddProcedure}
-                aria-label="Agregar nuevo procedimiento"
+                onClick={handleAddTramite}
+                aria-label="Agregar nuevo trámite"
               >
                 <MdAdd size={20} />
-                Agregar Tramite
+                Agregar Trámite
               </button>
             </div>
           </div>
@@ -203,99 +235,69 @@ function AdminProcedure() {
 
           {/* Mobile-first Cards Layout */}
           <div className="procedures__grid">
-            {procedures.map((procedure) => (
-              <div key={procedure.id} className="procedure__card">
+            {tramites.map((tramite, index) => {
+              console.log(`🔍 DEBUG - Rendering tramite ${index}:`, tramite);
+              console.log(`🔍 DEBUG - tramite.id:`, tramite.id);
+              return (
+                <div key={index} className="procedure__card">
                 <div className="procedure__header">
-                  <h3 className="procedure__title">{procedure.title}</h3>
+                  <h3 className="procedure__title">{tramite.title}</h3>
                   <div className="procedure__actions">
                     <button
                       className="procedure__action-btn procedure__view-btn"
-                      onClick={() => handleViewProcedure(procedure)}
-                      aria-label={`Ver contenido de ${procedure.title}`}
+                      onClick={() => handleViewTramite(tramite)}
+                      aria-label={`Ver contenido de ${tramite.title}`}
                       title="Ver contenido"
                     >
                       <MdVisibility size={20} />
                     </button>
                     <button
-                      className="procedure__action-btn procedure__edit-btn"
-                      onClick={() => handleEditProcedure(procedure)}
-                      aria-label={`Editar ${procedure.title}`}
-                      title="Editar titulo"
-                    >
-                      <MdEdit size={20} />
-                    </button>
-                    <button
                       className="procedure__action-btn procedure__delete-btn"
-                      onClick={() =>
-                        handleDeleteProcedure(procedure.id, procedure.title)
-                      }
-                      aria-label={`Eliminar ${procedure.title}`}
-                      title="Eliminar procedimiento"
+                      onClick={() => handleDeleteTramite(tramite.id, tramite.title)}
+                      aria-label={`Eliminar ${tramite.title}`}
+                      title="Eliminar trámite"
                     >
                       <MdDelete size={20} />
                     </button>
                   </div>
                 </div>
                 <div className="procedure__info">
-                  <p className="procedure__url">{procedure.url}</p>
-                  <p className="procedure__date">
-                    Creado:{" "}
-                    {new Date(procedure.dateCreated).toLocaleDateString()}
-                  </p>
+                  <p className="procedure__url">{tramite.url}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
-          {procedures.length === 0 && !error && (
-            <p className="procedures__no-users">No hay tramites registrados</p>
+          {tramites.length === 0 && !error && (
+            <p className="procedures__no-users">No hay trámites registrados</p>
           )}
 
-          {/* Add Procedure Modal */}
+          {/* Add Tramite Modal */}
           {showAddModal && (
             <div className="procedures__modal-overlay">
               <div className="procedures__modal-content">
-                <h3 className="procedures__modal-title">Agregar Nuevo Tramite</h3>
+                <h3 className="procedures__modal-title">
+                  Agregar Nuevo Trámite
+                </h3>
                 <form
                   onSubmit={handleSubmitAdd}
                   className="procedures__form-content"
                 >
                   <div>
-                    <label htmlFor="procedure-title">Titulo del Tramite</label>
+                    <label htmlFor="tramite-url">URL del Trámite</label>
                     <input
-                      id="procedure-title"
-                      type="text"
-                      value={newProcedure.title}
-                      onChange={(e) =>
-                        setNewProcedure({
-                          ...newProcedure,
-                          title: e.target.value,
-                        })
-                      }
-                      required
-                      className="procedures__input"
-                      placeholder="Ej: Solicitud de Afiliación"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="procedure-url">URL del Procedimiento</label>
-                    <input
-                      id="procedure-url"
+                      id="tramite-url"
                       type="url"
-                      value={newProcedure.url}
-                      onChange={(e) =>
-                        setNewProcedure({
-                          ...newProcedure,
-                          url: e.target.value,
-                        })
-                      }
+                      value={newUrl}
+                      onChange={(e) => setNewUrl(e.target.value)}
                       required
                       className="procedures__input"
-                      placeholder="https://www.pami.org.ar/tramites/nombre-tramite"
+                      placeholder="https://www.pami.org.ar/tramite/nombre-tramite"
                     />
                     <small className="procedures__help-text">
-                      La URL debe ser del dominio
-                      https://www.pami.org.ar/tramites/
+                      La URL debe ser de un trámite de PAMI
+                      (https://www.pami.org.ar/tramite/...)
                     </small>
                   </div>
 
@@ -308,11 +310,16 @@ function AdminProcedure() {
                       type="button"
                       className="procedures__cancel-btn"
                       onClick={closeModals}
+                      disabled={adding}
                     >
                       Cancelar
                     </button>
-                    <button type="submit" className="procedures__submit-btn">
-                      Agregar Tramite
+                    <button 
+                      type="submit" 
+                      className="procedures__submit-btn"
+                      disabled={adding}
+                    >
+                      {adding ? "Procesando..." : "Agregar Trámite"}
                     </button>
                   </div>
                 </form>
@@ -320,30 +327,45 @@ function AdminProcedure() {
             </div>
           )}
 
-          {/* View Procedure Modal */}
-          {showViewModal && selectedProcedure && (
+          {/* View Tramite Modal */}
+          {showViewModal && selectedTramite && (
             <div className="procedures__modal-overlay">
               <div className="procedures__modal-content procedures__modal-content--large">
                 <h3 className="procedures__modal-title">
-                  {selectedProcedure.title}
+                  {selectedTramite.title}
                 </h3>
                 <div className="procedure__view-content">
                   <p>
-                    <strong>URL:</strong> {selectedProcedure.url}
-                  </p>
-                  <p>
-                    <strong>Fecha de creación:</strong>{" "}
-                    {new Date(
-                      selectedProcedure.dateCreated
-                    ).toLocaleDateString()}
+                    <strong>URL:</strong>{" "}
+                    <a
+                      href={selectedTramite.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {selectedTramite.url}
+                    </a>
                   </p>
                   <div className="procedure__content">
-                    <h4>Contenido:</h4>
-                    <p>{selectedProcedure.content}</p>
+                    <h4>Descripción:</h4>
+                    <p>{selectedTramite.description}</p>
+                  </div>
+                  <div className="procedure__content">
+                    <h4>Información:</h4>
+                    <p>
+                      Este trámite ha sido procesado automáticamente desde la
+                      URL de PAMI.
+                    </p>
+                    <p>
+                      Para ver el contenido completo, haga clic en la URL de
+                      arriba.
+                    </p>
                   </div>
                 </div>
                 <div className="procedures__modal-buttons">
-                  <button className="procedures__cancel-btn" onClick={closeModals}>
+                  <button
+                    className="procedures__cancel-btn"
+                    onClick={closeModals}
+                  >
                     Cerrar
                   </button>
                 </div>
@@ -351,69 +373,6 @@ function AdminProcedure() {
             </div>
           )}
 
-          {/* Edit Procedure Modal */}
-          {showEditModal && selectedProcedure && (
-            <div className="procedures__modal-overlay">
-              <div className="procedures__modal-content">
-                <h3 className="procedures__modal-title">Editar Tramite</h3>
-                <form
-                  onSubmit={handleSubmitEdit}
-                  className="procedures__form-content"
-                >
-                  <div>
-                    <label htmlFor="edit-procedure-title">
-                      Titulo del Tramite
-                    </label>
-                    <input
-                      id="edit-procedure-title"
-                      type="text"
-                      value={newProcedure.title}
-                      onChange={(e) =>
-                        setNewProcedure({
-                          ...newProcedure,
-                          title: e.target.value,
-                        })
-                      }
-                      required
-                      className="procedures__input"
-                    />
-                  </div>
-                  <div>
-                    <label>URL del Procedimiento (no editable)</label>
-                    <input
-                      type="url"
-                      value={selectedProcedure.url}
-                      disabled
-                      className="procedures__input procedures__input--disabled"
-                    />
-                  </div>
-
-                  <div className="procedures__modal-buttons">
-                    <button
-                      type="button"
-                      className="procedures__cancel-btn"
-                      onClick={closeModals}
-                    >
-                      Cancelar
-                    </button>
-                    <button type="submit" className="procedures__submit-btn">
-                      Guardar Cambios
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
-          <div className="procedures__actions">
-            <button
-              onClick={() => navigate("/login")}
-              className="procedures__logout-btn"
-              aria-label="Cerrar sesión y volver al login"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
         </div>
       </div>
     </>
