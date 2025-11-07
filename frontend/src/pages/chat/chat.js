@@ -172,17 +172,16 @@ function Chat() {
     setIsLoading(true);
     setLoadingMessage("🎤 Escuchando... hablá ahora");
 
-    recognition.onresult = async (event) => {
-      const transcript = event.results[0][0].transcript;
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.trim();
       console.log("Texto reconocido:", transcript);
 
-      setNewMessage(transcript);
+      // Agrega el texto nuevo al final del input
+      setNewMessage((prev) => (prev ? prev + " " + transcript : transcript));
 
-      //Dejamos que sendMessageFromVoice maneje el isLoading
+      setLoadingMessage("🎤 Texto agregado. Podés seguir hablando o enviar el mensaje.");
       setIsListening(false);
-
-      //Esperamos a que envíe el mensaje como texto
-      await sendMessageFromVoice(transcript);
+      setIsLoading(false);
     };
 
     recognition.onerror = (event) => {
