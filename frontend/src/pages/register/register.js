@@ -25,40 +25,55 @@ function Register() {
   const API_URL = "http://localhost:8000/auth/";
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    // Verificar que la contraseña cumpla todos los requisitos antes de enviar
-    const allValid = Object.values(passwordValid).every(Boolean);
-    if (!allValid) {
-      setError("La contraseña no cumple los requisitos mínimos");
-      return;
-    }
+  e.preventDefault();
 
-    try {
-      await axios.post(
-        `${API_URL}register`,
-        {
-          primer_nombre: primerNombre,
-          segundo_nombre: segundoNombre,
-          apellido: apellido,
-          correo_electronico: email,
-          password: password,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+  // Validar campos obligatorios
+  if (!primerNombre || !apellido || !email || !password) {
+    setError("Todos los campos obligatorios deben estar completos");
+    return;
+  }
 
-      // Redirigir a login si se registra correctamente
-      navigate("/login");
-    } catch (err) {
-      console.error("Error al registrar:", err);
-      if (err.response && err.response.status === 400) {
-        setError(err.response.data.detail);
-      } else {
-        setError("Error de servidor");
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setError("El formato del correo electrónico no es válido");
+        return;
       }
-    }
-  };
+
+      // Verificar que la contraseña cumpla todos los requisitos antes de enviar
+      const allValid = Object.values(passwordValid).every(Boolean);
+      if (!allValid) {
+        setError("La contraseña no cumple los requisitos mínimos");
+        return;
+      }
+
+      // Si todo está correcto, enviar los datos al backend
+      try {
+        await axios.post(
+          `${API_URL}register`,
+          {
+            primer_nombre: primerNombre,
+            segundo_nombre: segundoNombre,
+            apellido: apellido,
+            correo_electronico: email,
+            password: password,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+
+        // Redirigir al login si se registra correctamente
+        navigate("/login");
+      } catch (err) {
+        console.error("Error al registrar:", err);
+        if (err.response && err.response.status === 400) {
+          setError(err.response.data.detail);
+        } else {
+          setError("Error de servidor");
+        }
+      }
+    };
 
   const validatePassword = (pwd) => {
     const length = pwd.length >= 8;
@@ -204,7 +219,6 @@ function Register() {
             className="register__submit-button"
             type="submit"
             aria-label="Crear nueva cuenta"
-            disabled={!Object.values(passwordValid).every(Boolean)}
           >
             Crear cuenta
           </button>
