@@ -97,6 +97,11 @@ def scrape_tramite(url: str) -> Optional[Dict]:
         # Extraer título (h2)
         titulo_tag = soup.find('h2')
         titulo = titulo_tag.get_text(strip=True) if titulo_tag else "Sin título"
+
+        # AGREGAR ESTA VALIDACIÓN:
+        if "trámite no encontrado" in titulo.lower() or "no encontrado" in titulo.lower():
+            print(f"⚠️ Trámite no existe: {url}")
+            return None  # Esto hará que el endpoint devuelva error 500
         
         # Extraer descripción (primer <p> después del h2)
         descripcion = ""
