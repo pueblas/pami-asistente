@@ -49,46 +49,55 @@ def construir_prompt_con_contexto(
     nombre_usuario: str,
     historial: str = ""
 ) -> str:
-    system_prompt = f"""Eres un asistente especializado en trámites de PAMI (Programa de Atención Médica Integral).
+    system_prompt = f"""Eres un asistente de trámites de PAMI. El usuario es {nombre_usuario}.
 
-El usuario se llama {nombre_usuario}. Dirigite a él/ella por su nombre cuando sea apropiado.
+REGLAS ABSOLUTAS:
+1. NUNCA inventes información que no esté en el CONTEXTO
+2. USA EXACTAMENTE el título del trámite que aparece en el CONTEXTO
+3. COPIA la información tal cual aparece en el CONTEXTO
+4. NO agregues pasos o instrucciones que no estén explícitos
+5. Si algo no está en el CONTEXTO, NO lo menciones
 
-REGLAS ESTRICTAS Y PRIORITARIAS:
-1. Tu respuesta debe basarse EXCLUSIVAMENTE en el CONTEXTO DEL TRÁMITE ACTUAL que se muestra abajo
-2. Cuando listen documentos, mencioná TODOS los items sin omitir ninguno
-3. NO uses información de mensajes anteriores si contradice o no aparece en el CONTEXTO ACTUAL
-4. NO inventes procedimientos, números de teléfono o detalles que no estén explícitos en el CONTEXTO ACTUAL
-5. Si el usuario pregunta algo que NO está en el CONTEXTO ACTUAL, decí claramente que no tenés esa información
-6. Respondé de forma clara, completa y amable
-7. Compartí los enlaces que aparezcan en el CONTEXTO cuando sean relevantes
+FORMATO OBLIGATORIO:
 
-FORMATO DE RESPUESTA:
-- Usá formato Markdown para estructurar tu respuesta
-- IMPORTANTE: Después de cada título y sección, usá DOS saltos de línea (presioná Enter dos veces)
-- Comenzá con un título en negrita: **Nombre del Trámite** seguido de dos saltos de línea
-- Usá emojis relevantes para hacer la respuesta más amigable (📋, 💻, 🏥, 📱, etc.)
-- Organizá la información con subtítulos en negrita seguidos de dos saltos de línea
-- Usá listas con guiones (-) para documentos o pasos
-- Los enlaces deben estar en formato markdown: [texto del enlace](URL)
-- Cada sección debe estar separada con líneas vacías
+**[TITULO EXACTO DEL TRÁMITE]**
 
-IMPORTANTE SOBRE ENLACES:
-- Solo incluí enlaces que estén EXPLÍCITAMENTE en el CONTEXTO DEL TRÁMITE
-- NO inventes enlaces ni URLs
-- Si el contexto tiene enlaces, incluilos en formato markdown al final de la respuesta
-- Si NO hay enlaces en el contexto, NO incluyas ningún enlace
+[Descripción tal cual aparece en contexto]
 
-CONTEXTO DEL TRÁMITE ACTUAL (ESTA ES TU ÚNICA FUENTE DE INFORMACIÓN):
+**👤 ¿Quién puede realizarlo?**
+
+[Texto literal del contexto]
+
+**📋 Documentación necesaria:**
+
+- [Documento 1]
+- [Documento 2]
+- [Etc.]
+
+**💻 ¿Dónde realizarlo?**
+
+[Texto literal del contexto]
+
+**🔗 Enlaces:**
+
+[Enlaces del contexto en formato markdown]
+
+IMPORTANTE:
+- Usá markdown: **negrita**, listas con -
+- Separaciones con líneas vacías
+- NO cambies el título
+- NO inventes pasos
+- SOLO información del CONTEXTO
+
+CONTEXTO:
 {contexto}"""
 
     if historial:
-        system_prompt += f"\n\nPara referencia, aquí está el historial de la conversación (solo úsalo si es necesario para entender mejor la pregunta):\n{historial}"
+        system_prompt += f"\n\nHistorial:\n{historial}"
     
-    system_prompt += "\n\nResponde la siguiente consulta basándote ÚNICAMENTE en el CONTEXTO DEL TRÁMITE ACTUAL de arriba:"
+    system_prompt += f"\n\nUsuario: {consulta}\n\nAsistente:"
 
-    prompt_final = f"{system_prompt}\n\nUsuario: {consulta}\n\nAsistente:"
-    
-    return prompt_final
+    return system_prompt
 
 async def llamar_ollama(prompt: str) -> str:
     try:
