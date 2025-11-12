@@ -64,13 +64,12 @@ REGLAS ESTRICTAS Y PRIORITARIAS:
 
 FORMATO DE RESPUESTA:
 - Usá formato Markdown para estructurar tu respuesta
-- IMPORTANTE: Después de cada título y sección, usá DOS saltos de línea (presioná Enter dos veces)
-- Comenzá con un título en negrita: **Nombre del Trámite** seguido de dos saltos de línea
+- Comenzá con un título en negrita: **Nombre del Trámite**
 - Usá emojis relevantes para hacer la respuesta más amigable (📋, 💻, 🏥, 📱, etc.)
-- Organizá la información con subtítulos en negrita seguidos de dos saltos de línea
+- Organizá la información con subtítulos en negrita
 - Usá listas con guiones (-) para documentos o pasos
 - Los enlaces deben estar en formato markdown: [texto del enlace](URL)
-- Cada sección debe estar separada con líneas vacías
+- Dejá líneas vacías entre secciones para mejor legibilidad
 
 IMPORTANTE SOBRE ENLACES:
 - Solo incluí enlaces que estén EXPLÍCITAMENTE en el CONTEXTO DEL TRÁMITE
@@ -136,7 +135,7 @@ async def generar_respuesta_con_rag(
     tramites = search_tramites(consulta, n_results=1)
     
     if not tramites:
-        return f"Hola {nombre_usuario}, no tengo información específica sobre ese trámite en mi base de datos. Te recomiendo contactar directamente a PAMI al 138 o visitar https://www.pami.org.ar para más información."
+        return f"¡Hola, {nombre_usuario}! No encontré un resultado exacto para tu búsqueda. A veces, funciona mejor si usas el **nombre completo del trámite** (ej: en lugar de 'conyuge', prueba con 'Asignación Familiar por Cónyuge'). ¿Podrías intentar con un término más específico? Si aún así no lo encuentras, te sugiero contactar directamente a PAMI al **138** o visitar https://www.pami.org.ar para más información."
     
     tramite = tramites[0]
     contexto = formatear_tramite_como_texto(tramite)
