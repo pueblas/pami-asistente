@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdChat, MdPeople, MdDescription, MdSettings } from "react-icons/md";
+import { MdChat, MdPeople, MdDescription, MdSettings, MdBarChart } from "react-icons/md";
 import TopBar from "../../components/topBar/TopBar";
 import "./adminHome.css";
 
@@ -40,6 +40,13 @@ function AdminHome() {
       icon: <MdDescription size={48} />,
       path: "/admin-procedures",
       color: "procedures",
+    },
+    {
+      title: "Estadísticas",
+      description: "Visualizar métricas y estadísticas de feedback del sistema",
+      icon: <MdBarChart size={48} />,
+      path: "/admin-graphics",
+      color: "graphics",
     },
   ];
 

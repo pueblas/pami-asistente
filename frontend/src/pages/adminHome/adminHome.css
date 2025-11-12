@@ -112,6 +112,18 @@
   );
 }
 
+.admin-home__section--graphics {
+  border-left: 4px solid var(--brand-secondary);
+}
+
+.admin-home__section--graphics:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 184, 88, 0.1) 0%,
+    var(--bg-primary) 100%
+  );
+}
+
 /* ===== SECTION CONTENT ===== */
 .admin-home__section-icon {
   color: var(--brand-secondary);
@@ -128,6 +140,10 @@
 
 .admin-home__section--procedures .admin-home__section-icon {
   color: var(--brand-tertiary);
+}
+
+.admin-home__section--graphics .admin-home__section-icon {
+  color: var(--brand-secondary);
 }
 
 .admin-home__section-content {
