@@ -51,6 +51,8 @@ def construir_prompt_con_contexto(
 ) -> str:
     system_prompt = f"""Eres un asistente de trámites de PAMI. El usuario es {nombre_usuario}.
 
+El usuario se llama {nombre_usuario}. Dirigite a él/ella por su nombre cuando sea apropiado.
+
 REGLAS ABSOLUTAS:
 1. NUNCA inventes información que no esté en el CONTEXTO
 2. USA EXACTAMENTE el título del trámite que aparece en el CONTEXTO
@@ -145,7 +147,7 @@ async def generar_respuesta_con_rag(
     tramites = search_tramites(consulta, n_results=1)
     
     if not tramites:
-        return f"Hola {nombre_usuario}, no tengo información específica sobre ese trámite en mi base de datos. Te recomiendo contactar directamente a PAMI al 138 o visitar https://www.pami.org.ar para más información."
+        return f"¡Hola, {nombre_usuario}! No encontré un resultado exacto para tu búsqueda. A veces, funciona mejor si usas el **nombre completo del trámite** (ej: en lugar de 'conyuge', prueba con 'Asignación Familiar por Cónyuge'). ¿Podrías intentar con un término más específico? Si aún así no lo encuentras, te sugiero contactar directamente a PAMI al **138** o visitar https://www.pami.org.ar para más información."
     
     tramite = tramites[0]
     contexto = formatear_tramite_como_texto(tramite)
