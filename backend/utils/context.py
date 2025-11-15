@@ -26,7 +26,7 @@ def add_message(user_id: int, role: str, content: str):
         user_id: ID del usuario
         role: "user" o "assistant"
         content: Contenido del mensaje
-    """
+    
     if user_id in user_contexts:
         user_contexts[user_id]["mensajes"].append({
             "role": role,
@@ -36,7 +36,7 @@ def add_message(user_id: int, role: str, content: str):
         # Mantener solo los últimos MAX_MESSAGES
         if len(user_contexts[user_id]["mensajes"]) > MAX_MESSAGES:
             user_contexts[user_id]["mensajes"] = user_contexts[user_id]["mensajes"][-MAX_MESSAGES:]
-
+    """
 def get_conversation_history(user_id: int) -> List[Dict]:
     """Obtiene el historial de mensajes de un usuario"""
     context = user_contexts.get(user_id)
