@@ -1,15 +1,8 @@
 {
   "tramites_urls": [
-    "https://www.pami.org.ar/tramite/consulta-consultorio-mdc",
     "https://www.pami.org.ar/tramite/cambio-medico",
-    "https://www.pami.org.ar/tramite/medicooncologo",
     "https://www.pami.org.ar/tramite/medicogastroenterologo",
-    "https://www.pami.org.ar/tramite/consulta-cirugia",
-    "https://www.pami.org.ar/tramite/consula-medicodiabetologo",
-    "https://www.pami.org.ar/tramite/consulta-cardiologia",
-    "https://www.pami.org.ar/tramite/medicamentos-excepcion",
     "https://www.pami.org.ar/tramite/suplementos-nutricionales",
-    "https://www.pami.org.ar/tramite/medicamentos-oncologicos",
     "https://www.pami.org.ar/tramite/insulinas",
     "https://www.pami.org.ar/tramite/traslados-ambulancia",
     "https://www.pami.org.ar/tramite/reintegro-gastos"
