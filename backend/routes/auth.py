@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from datetime import timedelta
 from pydantic import EmailStr
+import asyncio
+import random
 
 from db.connection import get_db
 from models.user import Usuario
@@ -116,31 +118,43 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     }
 
 @router.post("/recover")
-def recover_password(email: EmailStr, db: Session = Depends(get_db)):
-    """Solicitar recuperación de contraseña"""
+async def recover_password(email: EmailStr, db: Session = Depends(get_db)):
+    """Solicitar recuperación de contraseña con feedback claro"""
     
     # Buscar usuario por email
     user = db.query(Usuario).filter(
         Usuario.correo_electronico == email
     ).first()
     
-    # Siempre retornar éxito (seguridad: no revelar si el email existe)
-    response = {
-        "message": "Si el email existe, recibirás instrucciones para recuperar tu contraseña"
-    }
-    
     if user:
-        # Generar token de recuperación
+        # Usuario existe → enviar email real
         reset_token = create_reset_token(email)
-        
-        # Guardar token en la BD (opcional, para mayor seguridad)
         user.token_recuperacion = reset_token
         db.commit()
         
-        # Enviar email
         send_recovery_email(email, reset_token)
-    
-    return response
+        
+        # Delay aleatorio para dificultar enumeración
+        delay = random.uniform(0.5, 1.5)
+        print(f"✅ Email existe: {email} | Delay aplicado: {delay:.2f}s")
+        await asyncio.sleep(delay)
+        
+        return {
+            "success": True,
+            "message": "Correo de recuperación enviado. Revisá tu bandeja de entrada y spam.",
+            "email": email
+        }
+    else:
+        # Usuario NO existe → delay similar + mensaje claro
+        delay = random.uniform(1.0, 2.0)
+        print(f"❌ Email NO existe: {email} | Delay aplicado: {delay:.2f}s")
+        await asyncio.sleep(delay)
+        
+        return {
+            "success": False,
+            "message": "Este correo no está registrado en el sistema. ¿Querés crear una cuenta?",
+            "email": email
+        }
 
 @router.post("/reset")
 def reset_password(token: str, new_password: str, db: Session = Depends(get_db)):

@@ -27,7 +27,7 @@ function Recover() {
     try {
       const params = new URLSearchParams({ email: email });
       const url = `${API_URL}/auth/recover?${params.toString()}`;
-      console.log('Enviando petición a:', url); // Debug
+      console.log('Enviando petición a:', url);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -36,13 +36,21 @@ function Recover() {
         },
       });
 
+      // Leer el JSON de la respuesta
+      const data = await response.json();
+      
       if (response.ok) {
-        setMessage('Se ha enviado un correo con las instrucciones para recuperar tu contraseña.');
-        setEmail(''); // Limpiar el campo
+        // Verificar el campo 'success' del backend
+        if (data.success) {
+          // Email existe - mostrar mensaje de éxito
+          setMessage(data.message);
+          setEmail(''); // Limpiar el campo
+        } else {
+          // Email NO existe - mostrar como error
+          setError(data.message);
+        }
       } else {
-        const data = await response.json();
-        
-        // Manejar diferentes formatos de error del backend
+        // Error HTTP (400, 500, etc.)
         let errorMessage = 'Error al procesar la solicitud';
         
         if (data.detail) {
