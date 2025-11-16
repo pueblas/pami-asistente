@@ -42,6 +42,14 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
     navigate("/admin-graphics");
   };
 
+  const handleLogoClick = () => {
+    if (userRole === "administrador") {
+      navigate("/admin-home");
+    } else if (userRole === "usuario") {
+      navigate("/chat");
+    }
+  };
+
   const [userRole, setUserRole] = useState("");
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -80,7 +88,20 @@ const TopBar = ({ menuAbierto, onUserClick, showUserMenu = true }) => {
         Ir al contenido principal
       </a>
       <header className="top-bar" role="banner">
-        <div className="logo-container">
+        <div
+          className="logo-container"
+          onClick={handleLogoClick}
+          role="button"
+          tabIndex="0"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleLogoClick();
+            }
+          }}
+          aria-label="Ir a página principal"
+          style={{ cursor: isAuthenticated ? "pointer" : "default" }}
+        >
           <img
             src={logo}
             alt="Trámite Fácil - Logotipo de la aplicación"

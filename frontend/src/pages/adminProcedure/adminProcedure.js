@@ -120,6 +120,14 @@ function AdminProcedure() {
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
 
+    // Check if maximum tramites limit has been reached
+    if (tramites.length >= 10) {
+      setModalError(
+        "Has alcanzado el límite de 10 trámites. Para agregar uno nuevo, primero elimina un trámite existente."
+      );
+      return;
+    }
+
     if (!validatePamiUrl(newUrl)) {
       setModalError(
         "La URL debe ser de un trámite de PAMI (https://www.pami.org.ar/tramite/...)"
@@ -232,6 +240,26 @@ function AdminProcedure() {
           </div>
 
           {error && <p className="procedures__error">{error}</p>}
+
+          {/* Progress bar for tramites limit */}
+          <div className="procedures__progress-container">
+            <div className="procedures__progress-label">
+              <span>{tramites.length} de 10 trámites agregados</span>
+              <span>{10 - tramites.length} disponibles</span>
+            </div>
+            <div className="procedures__progress-track">
+              <div
+                className={`procedures__progress-fill ${
+                  tramites.length >= 10
+                    ? "procedures__progress-fill--full"
+                    : tramites.length >= 8
+                    ? "procedures__progress-fill--warning"
+                    : ""
+                }`}
+                style={{ width: `${(tramites.length / 10) * 100}%` }}
+              ></div>
+            </div>
+          </div>
 
           {/* Mobile-first Cards Layout */}
           <div className="procedures__grid">

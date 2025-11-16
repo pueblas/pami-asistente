@@ -20,6 +20,22 @@
   align-items: center;
   padding-left: var(--spacing-xs);
   margin-right: auto;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-fast);
+}
+
+.logo-container:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.logo-container:focus {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+.logo-container:active {
+  transform: scale(0.98);
 }
 
 .logo-image {
