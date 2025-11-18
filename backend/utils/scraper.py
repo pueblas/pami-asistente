@@ -176,7 +176,8 @@ def scrape_tramite(url: str) -> Optional[Dict]:
             "url_oficial": url,
             "metadata": {
                 "keywords": []  # Se generarán después con Ollama
-            }
+            },
+            "activo": True
         }
         
         print(f"✅ Trámite scrapeado: {tramite_id}")

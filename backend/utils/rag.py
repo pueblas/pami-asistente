@@ -144,10 +144,15 @@ async def generar_respuesta_con_rag(
     Returns:
         str: Respuesta generada con contexto o mensaje de no disponibilidad
     """
-    tramites = search_tramites(consulta, n_results=1)
-    
-    if not tramites:
+    tramites = search_tramites(consulta, n_results=3)
+
+    # Filtrar solo trámites activos
+    tramites_activos = [t for t in tramites if t.get('activo', True)]
+
+    if not tramites_activos:
         return f"¡Hola, {nombre_usuario}! No encontré un resultado exacto para tu búsqueda. A veces, funciona mejor si usas el **nombre completo del trámite** (ej: en lugar de 'conyuge', prueba con 'Asignación Familiar por Cónyuge'). ¿Podrías intentar con un término más específico? Si aún así no lo encuentras, te sugiero contactar directamente a PAMI al **138** o visitar https://www.pami.org.ar para más información."
+
+    tramite = tramites_activos[0]
     
     tramite = tramites[0]
     contexto = formatear_tramite_como_texto(tramite)

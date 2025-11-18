@@ -28,6 +28,7 @@ class TramiteListItem(BaseModel):
     title: str
     url: str
     description: str
+    activo: bool = True
 
 class TramitesListResponse(BaseModel):
     total: int
@@ -246,4 +247,101 @@ def delete_tramite_by_id(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error eliminando el trámite: {str(e)}"
+        )
+    
+@router.patch("/tramites/{tramite_id}/toggle")
+def toggle_tramite_estado(
+    tramite_id: str,
+    admin = Depends(require_role("administrador"))
+):
+    """
+    Cambiar el estado activo/inactivo de un trámite (solo admin)
+    
+    Args:
+        tramite_id: ID del trámite (ej: "insulinas", "cambio-medico")
+    
+    Returns:
+        Estado actualizado del trámite
+    """
+    from utils.vector_store import get_or_create_collection
+    import json
+    
+    try:
+        collection = get_or_create_collection()
+        
+        # 1. Buscar el trámite en ChromaDB por ID
+        results = collection.get(ids=[tramite_id])
+        
+        if not results['ids'] or len(results['ids']) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Trámite '{tramite_id}' no encontrado"
+            )
+        
+        # 2. Obtener el trámite actual
+        metadata = results['metadatas'][0]
+        tramite = json.loads(metadata['json_data'])
+        
+        # 3. Cambiar el estado
+        estado_actual = tramite.get('activo', True)
+        nuevo_estado = not estado_actual
+        tramite['activo'] = nuevo_estado
+        
+        # 4. Actualizar metadata
+        metadata['json_data'] = json.dumps(tramite, ensure_ascii=False)
+        
+        # 5. Actualizar en ChromaDB
+        collection.update(
+            ids=[tramite_id],
+            metadatas=[metadata]
+        )
+        
+        print(f"{'✅ Activado' if nuevo_estado else '🔴 Desactivado'} trámite: {tramite_id}")
+        
+        return {
+            "message": f"Trámite {'activado' if nuevo_estado else 'desactivado'} exitosamente",
+            "tramite_id": tramite_id,
+            "titulo": tramite['titulo'],
+            "activo": nuevo_estado
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error cambiando estado del trámite: {str(e)}"
+        )
+
+
+@router.get("/tramites", response_model=TramitesListResponse)
+def listar_tramites_con_estado(
+    admin = Depends(require_role("administrador"))
+):
+    """
+    Listar todos los trámites con su estado activo/inactivo (solo admin)
+    Reemplaza el endpoint /tramites-list existente
+    """
+    try:
+        tramites_data = get_all_tramites()
+        
+        tramites_list = []
+        for tramite in tramites_data:
+            tramites_list.append(TramiteListItem(
+                id=tramite.get("id", ""),
+                title=tramite.get("titulo", "Sin título"),
+                url=tramite.get("url_oficial", ""),
+                description=tramite.get("descripcion", "Sin descripción")[:200] + "..." if len(tramite.get("descripcion", "")) > 200 else tramite.get("descripcion", "Sin descripción"),
+                activo=tramite.get('activo', True)  # ← AGREGAR campo activo
+            ))
+        
+        return TramitesListResponse(
+            total=len(tramites_list),
+            tramites=tramites_list
+        )
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error obteniendo lista de trámites: {str(e)}"
         )
