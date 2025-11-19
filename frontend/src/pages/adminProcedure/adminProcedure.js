@@ -292,9 +292,16 @@ function AdminProcedure() {
               console.log(`🔍 DEBUG - Rendering tramite ${index}:`, tramite);
               console.log(`🔍 DEBUG - tramite.id:`, tramite.id);
               return (
-                <div key={index} className="procedure__card">
+                <div key={index} className={`procedure__card ${!tramite.activo ? 'procedure__card--inactive' : ''}`}>
                 <div className="procedure__header">
-                  <h3 className="procedure__title">{tramite.title}</h3>
+                  <h3 className="procedure__title">
+                    {tramite.title}
+                    {!tramite.activo && (
+                      <span className="procedure__status-badge procedure__status-badge--inactive">
+                        Inactivo
+                      </span>
+                    )}
+                  </h3>
                   <div className="procedure__actions">
                     <button
                       className="procedure__action-btn procedure__view-btn"
@@ -312,12 +319,19 @@ function AdminProcedure() {
                     >
                       <MdDelete size={20} />
                     </button>
-                    <button
-                      className={`toggle-btn ${tramite.activo ? "active" : "inactive"}`}
-                      onClick={() => handleToggleActivo(tramite.id)}
+                    <label
+                      className="toggle-switch"
+                      aria-label={`${tramite.activo ? 'Desactivar' : 'Activar'} ${tramite.title}`}
+                      title={tramite.activo ? 'Desactivar trámite' : 'Activar trámite'}
                     >
-                      {tramite.activo ? "Activo" : "Inactivo"}
-                    </button>
+                      <input
+                        type="checkbox"
+                        className="toggle-switch__input"
+                        checked={tramite.activo}
+                        onChange={() => handleToggleActivo(tramite.id)}
+                      />
+                      <span className="toggle-switch__slider"></span>
+                    </label>
                   </div>
                 </div>
                 <div className="procedure__info">
