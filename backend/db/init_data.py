@@ -65,8 +65,17 @@ def create_initial_data():
                 # Fechas solicitadas (día/mes/año) -> crear como datetime
                 d1 = datetime(2025, 11, 1, 10, 0, 0)
                 d2 = datetime(2025, 11, 2, 12, 0, 0)
+                d3 = datetime(2025, 10, 5, 22, 0, 0)
+                d4 = datetime(2025, 9, 3, 14, 0, 0)
 
                 sample_feedback = []
+
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta 4", mensaje_bot="Respuesta A", fecha_creacion=d3))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta 3", mensaje_bot="Respuesta A", fecha_creacion=d3))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta 2", mensaje_bot="Respuesta A", fecha_creacion=d3))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta 1", mensaje_bot="Respuesta A", fecha_creacion=d3))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta R", mensaje_bot="Respuesta A", fecha_creacion=d1))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta 4", mensaje_bot="Respuesta A", fecha_creacion=d1))
 
                 # Likes: 1 en 1/11/25 y 2 en 2/11/25
                 sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta A", mensaje_bot="Respuesta A", fecha_creacion=d1))
@@ -79,6 +88,22 @@ def create_initial_data():
                 sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta F", mensaje_bot="Respuesta F", fecha_creacion=d1))
                 sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta G", mensaje_bot="Respuesta G", fecha_creacion=d2))
 
+                # Agregar 2 likes el día 3 de septiembre de 2025
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta H", mensaje_bot="Respuesta H", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=True, mensaje_usuario="Consulta I", mensaje_bot="Respuesta I", fecha_creacion=d4))
+
+                # Agregar 10 dislikes el día 3 de septiembre de 2025
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta J", mensaje_bot="Respuesta J", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta K", mensaje_bot="Respuesta K", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta L", mensaje_bot="Respuesta L", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta M", mensaje_bot="Respuesta M", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta N", mensaje_bot="Respuesta N", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta O", mensaje_bot="Respuesta O", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta P", mensaje_bot="Respuesta P", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta Q", mensaje_bot="Respuesta Q", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta R", mensaje_bot="Respuesta R", fecha_creacion=d4))
+                sample_feedback.append(Feedback(correo_electronico=admin_user.correo_electronico, me_gusta=False, mensaje_usuario="Consulta S", mensaje_bot="Respuesta S", fecha_creacion=d4))
+                
                 db.add_all(sample_feedback)
                 db.commit()
                 print("✅ Datos de feedback de ejemplo creados")
