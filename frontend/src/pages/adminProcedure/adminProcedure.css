@@ -485,9 +485,28 @@
   cursor: not-allowed;
 }
 
+.toggle-btn {
+  padding: 6px 6px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease-in-out;
+}
+
+.toggle-btn.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.toggle-btn.inactive {
+  background-color: #f44336;
+  color: white;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Mobile peque�o: hasta 480px */
+/* Mobile peque o: hasta 480px */
 @media (max-width: 480px) {
   .procedures__container {
     padding: var(--spacing-sm);

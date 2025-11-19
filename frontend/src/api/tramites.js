@@ -55,7 +55,7 @@ export async function addTramiteUrl(url, token) {
  */
 export async function getTramitesList(token) {
   const response = await axios.get(
-    `${ADMIN_API_URL}tramites-list`,
+    `${ADMIN_API_URL}tramites`,
     { 
       headers: { 
         'Authorization': `Bearer ${token}`,
@@ -81,6 +81,27 @@ export async function deleteTramiteById(tramiteId, token) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       } 
+    }
+  );
+
+  return response.data;
+}
+
+
+/**
+ * Activar/Desactivar un trámite por su ID (solo admin)
+ * @param {string} tramiteId 
+ * @param {string} token 
+ */
+export async function toggleTramite(tramiteId, token) {
+  const response = await axios.patch(
+    `${ADMIN_API_URL}tramites/${tramiteId}/toggle`,
+    {},
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     }
   );
 

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdAdd, MdDelete, MdVisibility, MdSync } from "react-icons/md";
-import {
+import { 
   getTramitesList,
   addTramiteUrl,
   deleteTramiteById,
+  toggleTramite
 } from "../../api/tramites";
 import axios from "axios";
 import TopBar from "../../components/topBar/TopBar";
@@ -116,6 +117,30 @@ function AdminProcedure() {
       }
     }
   };
+
+
+  const handleToggleActivo = async (tramiteId) => {
+      try {
+        const token = localStorage.getItem("access_token");
+
+        // Llamada al backend
+        const result = await toggleTramite(tramiteId, token);
+
+        // Actualizar estado local sin recargar todo
+        setTramites(prev =>
+          prev.map(t =>
+            t.id === tramiteId ? { ...t, activo: result.activo } : t
+          )
+        );
+
+      } catch (err) {
+        console.error("Error toggling tramite:", err);
+        alert("Error al cambiar estado del trámite");
+      }
+    };
+
+
+
 
   const handleSubmitAdd = async (e) => {
     e.preventDefault();
@@ -286,6 +311,12 @@ function AdminProcedure() {
                       title="Eliminar trámite"
                     >
                       <MdDelete size={20} />
+                    </button>
+                    <button
+                      className={`toggle-btn ${tramite.activo ? "active" : "inactive"}`}
+                      onClick={() => handleToggleActivo(tramite.id)}
+                    >
+                      {tramite.activo ? "Activo" : "Inactivo"}
                     </button>
                   </div>
                 </div>
